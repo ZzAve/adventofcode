@@ -3,6 +3,8 @@ import java.io.File
 
 data class Slope(val right: Int, val down: Int)
 
+val hillSideMap = File("./src/main/resources/day3.data").readLines()
+
 fun main(args: Array<String>) {
     println("Hello Day 3!")
 
@@ -14,7 +16,7 @@ fun main(args: Array<String>) {
         Slope(1, 2)
     )
     val encounters: List<Long> = slopes.map {
-        val determineHitTreesForSlope = determineTreeEncounters(it.right, it.down)
+        val determineHitTreesForSlope = determineTreeEncounters(hillSideMap, it.right, it.down)
         determineHitTreesForSlope
     }
 
@@ -23,13 +25,13 @@ fun main(args: Array<String>) {
     println("Product: $products")
 }
 
-private fun determineTreeEncounters(right: Int, down: Int): Long {
+private fun determineTreeEncounters(landscape: List<String>, right: Int, down: Int): Long {
     var treesEncountered = 0L
     var open = 0
 
     var rightIdx = 0;
     var downIdx = 0
-    File("./src/main/resources/day3.data").forEachLine { line ->
+    landscape.forEach { line ->
         if (downIdx % down == 0) {
             val hitsTree = line[rightIdx % line.length] == '#'
             printLine(line, rightIdx, hitsTree)
