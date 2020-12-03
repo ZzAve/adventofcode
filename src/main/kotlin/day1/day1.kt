@@ -205,42 +205,37 @@ fun main(args: Array<String>) {
     println("Hello Day 1!")
 
 
-    find2EntriesSumTo2020()
+    println("--- Trying to find2EntriesSumTo2020 --- ")
+    find2EntriesSumTo(2020)
+    println("--- Trying to find3EntriesSumTo2020 --- ")
     find3EntriesSumTo2020()
 }
 
-private fun find2EntriesSumTo2020() {
-    println("--- Trying to find2EntriesSumTo2020 --- ")
-    for (i in data.indices) {
-        for (j in data.indices) {
-            when {
-                i == j -> continue
-                data[i] + data[j] == 2020 -> {
-                    println("Found numbers are ${data[i]} and ${data[j]}")
-                    println("Product of numbers is ${data[i] * data[j]}")
-                    return
-                }
+private fun find2EntriesSumTo(sum: Int = 2020, startIndex: Int = 0): Pair<Int, Int>? {
+    for (i in startIndex until data.size) {
+        for (j in i + 1 until data.size) {
+            if (data[i] + data[j] == sum) {
+                println("Found numbers are ${data[i]} and ${data[j]}")
+                println("Product of numbers is ${data[i] * data[j]}")
+                return i to j
             }
         }
     }
+
+    return null
 }
 
-private fun find3EntriesSumTo2020() {
-    println("--- Trying to find3EntriesSumTo2020 --- ")
+
+private fun find3EntriesSumTo2020(sum: Int = 2020): Pair<Int, Pair<Int, Int>>? {
     for (i in data.indices) {
-        for (j in data.indices) {
-            for (k in data.indices) {
-                when {
-                    i == j -> continue
-                    i == k -> continue
-                    j == k -> continue
-                    data[i] + data[j] + data[k] == 2020 -> {
-                        println("Found numbers are ${data[i]} and ${data[j]} and ${data[k]}")
-                        println("Product of numbers is ${data[i] * data[j] * data[k]}")
-                        return
-                    }
-                }
-            }
+        val twoEntries = find2EntriesSumTo(sum - data[i], i+1)
+        if (twoEntries != null) {
+            val (j, k) = twoEntries
+            println("3entries Found numbers are ${data[i]} and ${data[j]} and ${data[k]}")
+            println("3entries Product of numbers is ${data[i] * data[j] * data[k]}")
+            return i to (j to k)
         }
     }
+
+    return null
 }
