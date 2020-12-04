@@ -46,7 +46,7 @@ object Day4 {
 
     private fun getIfValidPassword(passport: Map<String, String>): Map<String, String>? {
         // should contain all 7 fields (don't care about the crazy id (cid) )
-        var isValidPassword = passportFields.all { passport.contains(it)}
+        var isValidPassword = passportFields.all { passport.contains(it) }
 
         return if (isValidPassword) passport else null;
     }
@@ -81,14 +81,11 @@ object Day4 {
     }
 
     private fun isValidHairColor(hairColor: String?) =
-        when {
-            hairColor == null -> false
-            hairColor[0] != '#' -> false
-            else -> {
-                val hexaColor = hairColor.substring(1)
-                hexaColor.matches(Regex("^[0-9a-f]{6}$"))
-            }
-        }
+        hairColor != null &&
+            hairColor
+                .substring(1)
+                .matches(Regex("^#[0-9a-f]{6}$"))
+
 
     private val validEyeColors = listOf("amb", "blu", "brn", "gry", "grn", "hzl", "oth")
     private fun isValidEyeColor(eyeColor: String?) = validEyeColors.contains(eyeColor)
