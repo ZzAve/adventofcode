@@ -28,4 +28,4 @@ gradle-wrapper.jar
 build
 
 .idea
-
+out
