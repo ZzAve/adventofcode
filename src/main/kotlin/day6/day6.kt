@@ -1,9 +1,11 @@
 package day6
 
-import java.io.File
+import getFile
 
 object Day6 {
-    private val input = File("./src/main/resources/day6.data").readLines()
+    val file = "day6.data"
+    private val input = getFile(file)
+
 
     fun solve() {
         //find groups
