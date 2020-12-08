@@ -19,7 +19,7 @@ object Day7 {
     }
 
     private fun determineParentBags(myBagsColor: String): Set<String> {
-        val applicableRules = input.mapNotNull { line ->
+        val applicableRules: List<Pair<String, String>> = input.mapNotNull { line ->
             Regex("(.*?) bags contain.*$myBagsColor").find(line)?.let { matchResult ->
                 matchResult.groups[1]?.value
                     ?.let { value ->
