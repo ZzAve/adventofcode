@@ -1,4 +1,4 @@
-val data = arrayOf(
+val data = listOf<Long>(
     1686,
     1337,
     1780,
@@ -206,29 +206,30 @@ fun main(args: Array<String>) {
 
 
     println("--- Trying to find2EntriesSumTo2020 --- ")
-    find2EntriesSumTo(2020)
+    val (i, j) = find2EntriesSumTo(2020, data)
+    println("Found numbers are ${data[i]} and ${data[j]}")
+    println("Product of numbers is ${data[i] * data[j]}")
+
     println("--- Trying to find3EntriesSumTo2020 --- ")
     find3EntriesSumTo2020()
 }
 
-private fun find2EntriesSumTo(sum: Int = 2020, startIndex: Int = 0): Pair<Int, Int>? {
-    for (i in startIndex until data.size) {
-        for (j in i + 1 until data.size) {
+fun find2EntriesSumTo(sum: Long = 2020, data: List<Long>, startIndex: Int = 0, endIndex: Int? = null): Pair<Int, Int> {
+    for (i in startIndex until (endIndex ?:data.size)) {
+        for (j in i + 1 until (endIndex ?:data.size)) {
             if (data[i] + data[j] == sum) {
-                println("Found numbers are ${data[i]} and ${data[j]}")
-                println("Product of numbers is ${data[i] * data[j]}")
                 return i to j
             }
         }
     }
 
-    return null
+    return -1 to -1
 }
 
 
 private fun find3EntriesSumTo2020(sum: Int = 2020): Pair<Int, Pair<Int, Int>>? {
     for (i in data.indices) {
-        val twoEntries = find2EntriesSumTo(sum - data[i], i+1)
+        val twoEntries = find2EntriesSumTo(sum - data[i], data, i+1)
         if (twoEntries != null) {
             val (j, k) = twoEntries
             println("3entries Found numbers are ${data[i]} and ${data[j]} and ${data[k]}")
