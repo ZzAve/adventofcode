@@ -40,8 +40,9 @@ object Day9 {
         }
 
         return if (values.sum() == firstInvalidEntry){
-            val min = values.minOrNull() ?: 0L
-            val max = values.maxOrNull() ?: 0L
+            val slice = encodedStuff.slice(startIndex..i)
+            val min = slice.minOrNull() ?: 0L
+            val max = slice.maxOrNull() ?: 0L
             println("contiguous set found $values (indexes $startIndex - $i)")
             println("Min value: $min, max value: $max, sum ${min+max}")
         } else {
