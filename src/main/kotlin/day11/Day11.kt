@@ -74,22 +74,32 @@ object Day11 {
         return when (SeatOccupation.byChar(seatingArrangement[row][seat])) {
             SeatOccupation.FLOOR -> SeatOccupation.FLOOR
             SeatOccupation.EMPTY -> {
-                val adjecentOccupiedSeats = getAdjacentOccupiedSeats(seatingArrangement, row, seat)
+                val adjecentOccupiedSeats = getAdjacentCharacterCount(
+                    seatingArrangement,
+                    row,
+                    seat
+                )
                 if (adjecentOccupiedSeats == 0) SeatOccupation.OCCUPIED else SeatOccupation.EMPTY
             }
             SeatOccupation.OCCUPIED -> {
-                val adjecentOccupiedSeats = getAdjacentOccupiedSeats(seatingArrangement, row, seat)
+                val adjecentOccupiedSeats = getAdjacentCharacterCount(
+                    seatingArrangement,
+                    row,
+                    seat
+                )
                 if (adjecentOccupiedSeats >= 4) SeatOccupation.EMPTY else SeatOccupation.OCCUPIED
             }
         }
     }
 
 
-    private fun getAdjacentOccupiedSeats(
+    fun getAdjacentCharacterCount(
         seatingArrangement: List<List<Char>>,
         mrow: Int,
         mseat: Int,
-        adjacencyLimit: Int = 1
+        adjacencyLimit: Int = 1,
+        character: Char = '#',
+        excludeMrowSeat: Boolean = true
     ): Int {
         var count = 0
         val rowRange = maxOf(0, (mrow - adjacencyLimit))..minOf(seatingArrangement.size - 1, mrow + adjacencyLimit)
@@ -99,8 +109,8 @@ object Day11 {
                 mseat + adjacencyLimit
             )) {
 
-                if (!(row == mrow && seat == mseat) &&
-                    seatingArrangement[row][seat] == '#'
+                if (!(excludeMrowSeat && row == mrow && seat == mseat) &&
+                    seatingArrangement[row][seat] == character
                 ) {
                     count++
                 }
