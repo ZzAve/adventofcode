@@ -12,6 +12,7 @@ object Day17 {
 
         val gameOfEngine = playGameOfEngine(initialEngineState, 6)
 
+
         val nrOfActiveCubes = getActiveCubes(gameOfEngine)
         println("After 6 rounds, $nrOfActiveCubes are active")
 
