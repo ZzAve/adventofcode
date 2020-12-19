@@ -1,6 +1,5 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import day11.Day11
 import nl.zzave.adventofcode.printMatrix
 
 object Day17 {
