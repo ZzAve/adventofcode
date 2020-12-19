@@ -1,11 +1,10 @@
 package nl.zzave.adventofcode.twentytwenty
 
 import day11.Day11
-import getFile
-import printMatrix
+import nl.zzave.adventofcode.printMatrix
 
 object Day17 {
-    private val startingPoint = getFile("twentytwenty/day17.data")
+    private val startingPoint = getTwentyTwentyFile("day17.data")
     fun solve(startingPoint: List<String> = Day17.startingPoint): Pair<Int, Int> {
         val initialEngineState: List<List<List<Char>>> =
             listOf(startingPoint.map { it.toCharArray().toList() })

@@ -1,3 +1,5 @@
+package nl.zzave.adventofcode.twentytwenty
+
 import java.io.File
 
 const val BIRTH_YEAR = "byr"

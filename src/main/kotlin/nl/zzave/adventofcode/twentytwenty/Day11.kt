@@ -1,20 +1,20 @@
-package day11
+package nl.zzave.adventofcode.twentytwenty
 
-import getFile
+import nl.zzave.adventofcode.getFile
 
 object Day11 {
     private val initialSeatingArrangement = getFile("day11.data")
     fun solve() {
         val seatingArrangement = initialSeatingArrangement.map { it.toCharArray().toList() }
         val gameOfSeatsResult = playGameOfSeats(seatingArrangement, RuleSet.ADJACENCY)
-//        printMatrix(gameOfSeatsResult)
+//        nl.zzave.adventofcode.printMatrix(gameOfSeatsResult)
         val occupiedSeats =
             gameOfSeatsResult.fold(0) { acc: Int, list -> acc + list.count { it == SeatOccupation.OCCUPIED.char } }
         println("Total number of occupied seats: $occupiedSeats")
 
 
         val gameOfSeatsPart2Result = playGameOfSeats(seatingArrangement, RuleSet.VISIBILITY)
-//        printMatrix(gameOfSeatsPart2Result)
+//        nl.zzave.adventofcode.printMatrix(gameOfSeatsPart2Result)
         val occupiedSeatsPart2 =
             gameOfSeatsPart2Result.fold(0) { acc: Int, list -> acc + list.count { it == SeatOccupation.OCCUPIED.char } }
         println("Total number of occupied seats after part2: $occupiedSeatsPart2")

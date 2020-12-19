@@ -1,6 +1,6 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
+import nl.zzave.adventofcode.getFile
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

@@ -1,9 +1,7 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
-
 object Day18 {
-    private val homework: List<String> = getFile("twentytwenty/day18.data")
+    private val homework: List<String> = getTwentyTwentyFile("day18.data")
 
     fun solve(homework: List<String> = Day18.homework): Pair<Long, Long> {
         val tokenized = homework.map {

@@ -1,9 +1,8 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
-
 object Day13 {
-    private val inputFile = getFile("twentytwenty/day13.data")
+    private val inputFile = getTwentyTwentyFile("day13.data")
+
     fun solve(input: List<String> = inputFile): Pair<Long, Long> {
         val time = input[0].toLong()
         val activeBusses = input[1].split(",").mapNotNull {

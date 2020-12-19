@@ -1,6 +1,5 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
 import kotlin.math.absoluteValue
 
 
@@ -8,7 +7,7 @@ typealias Position = Pair<Long, Long>
 typealias LocationVector = Pair<Position, Day12.Orientation>
 
 object Day12 {
-    private val instructions = getFile("twentytwenty/day12.data")
+    private val instructions = getTwentyTwentyFile("day12.data")
 
     enum class Orientation(val horizontal: Int, val vertical: Int, val direction: Int) {
         NORTH(0, 1, 0),

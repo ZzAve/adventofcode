@@ -1,6 +1,6 @@
-package day10
+package nl.zzave.adventofcode.twentytwenty
 
-import getFile
+import nl.zzave.adventofcode.getFile
 
 object Day10 {
     private val chargerOutputRatings = getFile("day10.data").map { it.toInt() }

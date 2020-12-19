@@ -1,6 +1,6 @@
-package day6
+package nl.zzave.adventofcode.twentytwenty
 
-import getFile
+import nl.zzave.adventofcode.getFile
 
 object Day6 {
     val file = "day6.data"

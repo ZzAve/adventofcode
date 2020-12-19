@@ -1,8 +1,8 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
-import prettyPrint
-import printMatrix
+import nl.zzave.adventofcode.getFile
+import nl.zzave.adventofcode.prettyPrint
+import nl.zzave.adventofcode.printMatrix
 
 object Day16 {
     data class Rule(
@@ -160,9 +160,9 @@ object Day16 {
                 transpose[j][i] = looselyValidTickets[i][j]
             }
         }
-//        printMatrix(looselyValidTickets)
+//        nl.zzave.adventofcode.printMatrix(looselyValidTickets)
 //        println("---- ----- ----")
-//        printMatrix(transpose)
+//        nl.zzave.adventofcode.printMatrix(transpose)
         return transpose
     }
 

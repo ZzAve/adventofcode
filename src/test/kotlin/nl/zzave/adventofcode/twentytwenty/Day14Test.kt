@@ -1,10 +1,12 @@
 package nl.zzave.adventofcode.twentytwenty
 
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 internal class Day14Test{
     @Test
+    @Disabled
     fun x(){
 
        val file= getTestFile("day14.data")

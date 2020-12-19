@@ -1,6 +1,6 @@
-package day8
+package nl.zzave.adventofcode.twentytwenty
 
-import getFile
+import nl.zzave.adventofcode.getFile
 
 object Day8 {
     val bootScript = getFile("day8.data")

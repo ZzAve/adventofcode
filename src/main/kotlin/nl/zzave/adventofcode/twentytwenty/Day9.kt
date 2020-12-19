@@ -1,7 +1,7 @@
-package day9
+package nl.zzave.adventofcode.twentytwenty
 
 import find2EntriesSumTo
-import getFile
+import nl.zzave.adventofcode.getFile
 
 object Day9 {
 

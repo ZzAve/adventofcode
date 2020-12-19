@@ -1,10 +1,9 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import getFile
 import kotlin.math.pow
 
 object Day14 {
-    private val data = getFile("twentytwenty/day14.data")
+    private val data = getTwentyTwentyFile("day14.data")
 
     fun solve(input: List<String> = data): Pair<Long, Long> {
 
