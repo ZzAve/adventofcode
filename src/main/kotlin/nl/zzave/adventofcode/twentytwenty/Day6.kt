@@ -1,6 +1,7 @@
 package nl.zzave.adventofcode.twentytwenty
 
 import nl.zzave.adventofcode.getFile
+import nl.zzave.adventofcode.splitByEmptyEntry
 
 object Day6 {
     val file = "day6.data"
@@ -9,7 +10,7 @@ object Day6 {
 
     fun solve() {
         //find groups
-        val groups = findGroups(input)
+        val groups = splitByEmptyEntry(input)
 
         val summedUniqueAnyYesses = groups.map {
             countUniqueAnyYesAnswers(it)
@@ -25,26 +26,7 @@ object Day6 {
     }
 
 
-    private fun findGroups(input: List<String>): List<List<String>> {
-        val groups = mutableListOf<List<String>>()
 
-        var currentGroup = mutableListOf<String>()
-        input.forEach {
-            if (it.isEmpty()) {
-                groups.add(currentGroup)
-                currentGroup = mutableListOf()
-            } else {
-                currentGroup.add(it)
-            }
-        }
-
-        if (currentGroup.isNotEmpty()) {
-            groups.add(currentGroup)
-        }
-
-        return groups
-
-    }
 
     private fun countUniqueAnyYesAnswers(groupInput: List<String>): Int =
         groupInput.reduce { acc: String, i -> acc + i }
