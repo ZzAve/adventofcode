@@ -2,7 +2,9 @@ package nl.zzave.adventofcode.twentytwenty
 
 import nl.zzave.adventofcode.splitByEmptyEntry
 import nl.zzave.adventofcode.transposeMatrix
+import kotlin.math.abs
 import kotlin.math.cos
+import kotlin.math.roundToInt
 import kotlin.math.sin
 
 object Day20 {
@@ -18,7 +20,7 @@ object Day20 {
             points.replaceAll { it.rotate(degrees) }
         }
 
-        fun hasMatchingSides(other: Tile){
+        fun hasMatchingSides(other: Tile) {
 
         }
 
@@ -45,6 +47,7 @@ object Day20 {
         val y: Double
 
     ) {
+        private val epsilon = 0.01
 
         fun rotate(degrees: Int): Point2D {
             val rad = degrees / 180.0 * Math.PI
@@ -54,6 +57,16 @@ object Day20 {
             )
 
         }
+
+        override fun hashCode(): Int {
+            return 100 * (this.x *1/epsilon).roundToInt() + (this.y*1/epsilon).roundToInt()
+        }
+
+        override fun equals(other: Any?): Boolean =
+            if (other !is Point2D) false
+            else abs(this.x - other.x) < epsilon && abs(this.y - other.y) < epsilon
+
+
     }
 
     private val tilesInput = getTwentyTwentyFile("day20.data")
@@ -105,7 +118,6 @@ object Day20 {
 
         // determine orientation
         // non matching sides need to be left and up
-
 
 
         // put first index in place
@@ -188,7 +200,7 @@ object Day20 {
 
             val transposed = transposeMatrix(subList.map { it.map { c -> c } }, '.', false)
             for ((row, side) in listOf(0, transposed.size - 1).zip(listOf(Side.LEFT, Side.RIGHT))) {
-                uniqueSides.add(transposed[row].fold(""){acc,i -> acc+i})
+                uniqueSides.add(transposed[row].fold("") { acc, i -> acc + i })
 
                 val fst = subList[row].toBinary()
                 val snd = subList[row].reversed().toBinary()
@@ -203,7 +215,8 @@ object Day20 {
         }
 
 
-    private fun String.toBinary(char: Char = '#'): Long = map { if (it == char) "1" else "0" }.fold(""){acc,i -> acc+i}.toLong(2)
+    private fun String.toBinary(char: Char = '#'): Long =
+        map { if (it == char) "1" else "0" }.fold("") { acc, i -> acc + i }.toLong(2)
 }
 
 fun main() {
