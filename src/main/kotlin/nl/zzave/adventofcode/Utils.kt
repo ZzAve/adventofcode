@@ -45,10 +45,12 @@ inline fun <reified T> transposeMatrix(matrix: List<List<T>>, default: T, printB
 }
 
 
-fun <T> printMatrix(matrix: Iterable<Iterable<T>>) {
+fun printMatrixOfStrings(matrix: Iterable<String>) = printMatrix(matrix.map{it.map {c -> c}})
+
+inline fun <reified T> printMatrix(matrix: Iterable<Iterable<T>>) {
     matrix.forEach { line ->
         line.forEach { c ->
-            print("$c ")
+            print("$c")
         }
         println()
     }
