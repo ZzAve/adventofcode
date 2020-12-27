@@ -1,6 +1,6 @@
 package nl.zzave.adventofcode.twentytwenty
 
-import nl.zzave.adventofcode.twentytwenty.Day20.Point2D
+import nl.zzave.adventofcode.utils.Point2D
 import kotlin.math.*
 
 object Day24 {
@@ -81,13 +81,13 @@ object Day24 {
 
     }
 
-    private fun Point2D.gridded(decimals: Int)=Point2D(
+    private fun Point2D.gridded(decimals: Int)= Point2D(
         this.x / cos(toRadians(60)),
         this.y / sin(toRadians(60))
 
     )
 
-    private fun printTiles(tiles: Set<Point2D>,highlightedTiles :Set<Point2D> = emptySet()) {
+    private fun printTiles(tiles: Set<Point2D>, highlightedTiles :Set<Point2D> = emptySet()) {
         val map = tiles.map { it.gridded(1) }.toSet()
         val highlighted = highlightedTiles.map { it.gridded(1) }.toSet()
 

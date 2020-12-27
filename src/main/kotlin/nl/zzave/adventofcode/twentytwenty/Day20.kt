@@ -1,11 +1,12 @@
 package nl.zzave.adventofcode.twentytwenty
 
+import nl.zzave.adventofcode.printMatrixOfStrings
 import nl.zzave.adventofcode.splitByEmptyEntry
 import nl.zzave.adventofcode.transposeMatrix
+import nl.zzave.adventofcode.utils.Point2D
+import nl.zzave.adventofcode.utils.Point2DInt
 import kotlin.math.abs
-import kotlin.math.cos
 import kotlin.math.roundToInt
-import kotlin.math.sin
 
 object Day20 {
     data class Tile(
@@ -21,57 +22,20 @@ object Day20 {
         var offset: Point2D = Point2D(0.0, 0.0),
         var orientation: Orientation = Orientation(0, false)
     ) {
+        fun rotatedPoints(degrees: Int): List<Point2D> = rotatedPoints(degrees, false)
 
-
-        fun rotatedPoints(degrees: Int): List<Point2D> {
-            return points.map {
-                val translated = it - center
-                val rotated = translated.rotated(degrees)
-                val translatedBack = rotated + center
-                translatedBack
-            }
-        }
-
-        fun rotatedPoints(degrees: Int, flippedHorizontally: Boolean): List<Point2D> {
-            return points.map {
+        fun rotatedPoints(degrees: Int, flippedHorizontally: Boolean): List<Point2D> =
+            points.map {
                 val translated = it - center
                 var rotated = translated.rotated(degrees)
                 if (flippedHorizontally) rotated = rotated.flippedHorizontally()
                 val translatedBack = rotated + center
                 translatedBack
             }
-        }
-
-
-        // In place
-        fun rotate(degrees: Int) {
-            points.clear()
-            points.addAll(rotatedPoints(degrees))
-
-            orientation =
-                Orientation(
-                    orientation.rotation + degrees, orientation.flippedHorizontally
-                )
-        }
-
-        fun flipHorizontally() {
-            points.replaceAll {
-                val translated = it - center
-                val flipped = translated.flippedHorizontally()
-                flipped + center
-            }
-            orientation = Orientation(orientation.rotation, flippedHorizontally = !orientation.flippedHorizontally)
-
-        }
-
-        fun hasMatchingSides(other: Tile) {
-
-        }
 
         override fun toString(): String {
             return "Tile[id: $id, sideEncodings: $sideEncodings, uniqueSides: $uniqueSides, matches: ${matches.map { "${it.key}" }}]"
         }
-
     }
 
     enum class Side(val unitVector: Point2D, val flipped: Boolean) {
@@ -84,61 +48,16 @@ object Day20 {
         FLEFT(Point2D(-1.0, 0.0), true),
         FBOTTOM(Point2D(0.0, -1.0), true);
 
-        fun flipped(): Side {
-            return byDirection(this.unitVector, !this.flipped)
+        fun flipped(): Side = byDirection(this.unitVector, !this.flipped)
 
-//            return when (this) {
-//                TOP -> FTOP
-//                FTOP -> TOP
-//                RIGHT -> FRIGHT
-//                FRIGHT -> RIGHT
-//                BOTTOM -> FBOTTOM
-//                FBOTTOM -> BOTTOM
-//                LEFT -> FLEFT
-//                FLEFT -> LEFT
-//            }
-        }
+        fun rotate(degrees: Int): Side = byDirection(this.unitVector.rotated(degrees), this.flipped)
 
-        fun rotate(degrees: Int): Side {
-            return byDirection(this.unitVector.rotated(degrees), this.flipped)
-        }
+        fun rotateCounterClockWise(): Side = byDirection(this.unitVector.rotated(90), this.flipped)
 
-        fun rotateCounterClockWise(): Side {
-            return byDirection(this.unitVector.rotated(90), this.flipped)
-
-//            return when (this) {
-//                TOP -> LEFT
-//                LEFT -> BOTTOM
-//                BOTTOM -> RIGHT
-//                RIGHT -> TOP
-//                FTOP -> FLEFT
-//                FLEFT -> FBOTTOM
-//                FBOTTOM -> FRIGHT
-//                FRIGHT -> FTOP
-//            }
-        }
-
-        fun opposed(): Side {
-            return byDirection(this.unitVector.rotated(180), this.flipped)
-//            return when (this) {
-//                TOP -> BOTTOM
-//                LEFT -> RIGHT
-//                BOTTOM -> TOP
-//                RIGHT -> LEFT
-//                FTOP -> FBOTTOM
-//                FLEFT -> FRIGHT
-//                FBOTTOM -> FTOP
-//                FRIGHT -> FLEFT
-//            }
-        }
+        fun opposed(): Side = byDirection(this.unitVector.rotated(180), this.flipped)
 
         fun horizontalFlip(): Side = byDirection(
             Point2D(unitVector.x * -1, unitVector.y),
-            !this.flipped
-        )
-
-        fun verticalFlip(): Side = byDirection(
-            Point2D(unitVector.x, unitVector.y - 1),
             !this.flipped
         )
 
@@ -150,58 +69,23 @@ object Day20 {
 
     }
 
-    data class Point2DInt(
-        val x: Int,
-        val y: Int
-    )
 
-    data class Point2D(
-        val x: Double,
-        val y: Double
-
-    ) {
-        private val epsilon = 0.01
-
-        fun rotated(degrees: Int): Point2D {
-            val rad = degrees / 180.0 * Math.PI
-            return Point2D(
-                x * cos(rad) - y * sin(rad),
-                x * sin(rad) + y * cos(rad)
-            )
-
-        }
-
-        fun flippedHorizontally(): Point2D {
-            return Point2D(-x, y)
-        }
-
-        fun toPoint2DInt() = Point2DInt(x.roundToInt(), y.roundToInt())
-
-        override fun hashCode(): Int {
-            return 100 * (this.x * 1 / epsilon).roundToInt() + (this.y * 1 / epsilon).roundToInt()
-        }
-
-        override fun equals(other: Any?): Boolean =
-            if (other !is Point2D) false
-            else abs(this.x - other.x) < epsilon && abs(this.y - other.y) < epsilon
-
-        operator fun plus(other: Point2D) = Point2D(x + other.x, y + other.y)
-        operator fun times(i: Int) = Point2D(x * i, y * i)
-        operator fun minus(other: Day20.Point2D) = Point2D(x - other.x, y - other.y)
-
-
-    }
+    data class Orientation(val rotation: Int, val flippedHorizontally: Boolean)
 
     private val tilesInput = getTwentyTwentyFile("day20.data")
 
-    fun solve(tilesInput: List<String> = Day20.tilesInput): Pair<Long, Long> {
+    private val seaMonster = listOf(
+        "..................#.",
+        "#....##....##....###",
+        ".#..#..#..#..#..#.."
+    )
+
+    fun solve(tilesInput: List<String> = Day20.tilesInput): Pair<Long, Int> {
 
         // split by empty line
         val separateTiles = splitByEmptyEntry(tilesInput)
         val tiles = convertToTiles(separateTiles)
 
-        println("All side encodings size: ${allSideEncodings.size}")
-        println("All unique side encodings size: ${allSideEncodings.toSet().size}")
         determinePossibleNeighboursForTiles(tiles)
 
         //Corner pieces have only 2 matching sides
@@ -217,39 +101,117 @@ object Day20 {
         val productOfCornerPiecesIds = cornerPieces.fold(1L) { acc, tile -> acc * tile.id }
         println("Product of ids: $productOfCornerPiecesIds")
 
-
-        // Side pieces have only 3 matching sides
-//        val sidePieces = tiles
-//            .filter { tile ->
-//                tile.hasAMatchWithAnotherUniqueSide
-//                    .filter { it.value }.size == 3
-//            }
-//
-//        val centerPieces = tiles
-//            .filter { tile ->
-//                tile.hasAMatchWithAnotherUniqueSide
-//                    .filter { it.value }.size == 4
-//            }
-
-
         // Start composing total puzzle.
         // Pick one of the corners
-        // put at 0,0
+        // put at 0,0 (BOTTOM LEFT)
         // ensure matching sides go right and down OR
         // ensure non matching sides go left and up
 
+        val puzzle = mutableSetOf<Point2D>()
+        val placedCornerPiece = placeACornerPiece(puzzle, cornerPieces)
+
+        printPuzzle(puzzle)
+
+        // Now, recursively apply all matches
+        applyMatches(puzzle, placedCornerPiece)
+
+
+        println("Final puzzle:")
+        printPuzzle(puzzle)
+
+        // remove borders
+        val puzzleWithoutBorders = puzzle.mapNotNull {
+            when {
+                it.x.roundToInt() % 10 == 0 || it.x.roundToInt() % 10 == 9 -> null
+                it.y.roundToInt() % 10 == 0 || it.y.roundToInt() % 10 == 9 -> null
+                else -> Point2D(
+                    it.x - (2 * (it.x.roundToInt() / 10) + 1),
+                    it.y - (2 * (it.y.roundToInt() / 10) + 1),
+                )
+            }
+        }
+
+        printPuzzle(puzzleWithoutBorders, withGaps = false)
+
+        // Now, find something
+        val seaMonsterPoints = convertToPoints(seaMonster)
+
+        val min = puzzleWithoutBorders.reduce { acc, p -> Point2D(minOf(acc.x, p.x), minOf(acc.y, p.y)) }
+        val max = puzzleWithoutBorders.reduce { acc, p -> Point2D(maxOf(acc.x, p.x), maxOf(acc.y, p.y)) }
+
+        val puzzleAsTile = Tile(
+            0,
+            puzzleWithoutBorders.toMutableList(),
+            emptyList(),
+            mutableMapOf(),
+            Point2D((max.x + min.x) / 2, (max.y + min.y) / 2)
+        )
+
+        val allHits = mutableSetOf<Point2D>()
+        val allHitCount = mutableListOf<Int>()
+        for (rotation in 0..3) {
+            for (flipped in 0..1) {
+                val puzzlePoints = puzzleAsTile.rotatedPoints(rotation*90, flipped ==1).toSet()
+
+                println("Trying to find seamonsters for ${rotation*90} and flipped: ${flipped ==1}")
+                printPuzzle(puzzlePoints, withGaps = false)
+                val hits = mutableSetOf<Point2D>()
+                var hitCount = 0
+
+                for (offsetX in min.x.roundToInt()..max.x.roundToInt()) {
+                    for (offsetY in min.y.roundToInt()..max.y.roundToInt()) {
+                        val seaMonsterPointsOffset = seaMonsterPoints.map { it + Point2D(offsetX, offsetY) }.toSet()
+
+                        if (seaMonsterPointsOffset intersect puzzlePoints == seaMonsterPointsOffset) {
+                            hits.addAll(seaMonsterPointsOffset)
+                            hitCount++
+                        }
+                    }
+                }
+
+                allHits.addAll(hits)
+                allHitCount.add(hitCount)
+            }
+        }
+
+        println("Found hits: $allHits")
+        println("Hitcount: $allHitCount")
+        val roughSeas = puzzleWithoutBorders.size - allHits.size
+
+        println("Found rough seas: $roughSeas")
+
+        return productOfCornerPiecesIds to roughSeas
+    }
+
+    private fun convertToPoints(seaMonster: List<String>): List<Point2D> {
+        printMatrixOfStrings(seaMonster)
+        val seaMonsterEncoding = mutableListOf<Point2D>()
+        for (row in seaMonster.indices) {
+            for (col in seaMonster[row].indices) {
+                if (seaMonster[row][col] == '#') {
+                    seaMonsterEncoding.add(Point2D(col * 1.0, seaMonster.size - 1 - row * 1.0))
+                }
+
+            }
+        }
+
+        return seaMonsterEncoding
+    }
+
+    private fun placeACornerPiece(
+        puzzle: MutableSet<Point2D>,
+        cornerPieces: List<Tile>
+    ): Tile {
         // start at current orientation.
         val startingTileLeftTop = cornerPieces[0]
         println("Tile ${startingTileLeftTop.id}:")
         printPuzzle(startingTileLeftTop.points)
         println("---")
-        val puzzle = mutableSetOf<Point2D>()
         var rotation = 0;
         var sidesNeeded = listOf(Side.TOP, Side.RIGHT)
         while (true) {
             if (sidesNeeded.all { startingTileLeftTop.matches.contains(it) }) {
                 val rotatedPoints: List<Point2D> = startingTileLeftTop.rotatedPoints(rotation)
-
                 puzzle.addAll(rotatedPoints)
                 startingTileLeftTop.processed = true
                 startingTileLeftTop.offset = Point2D(0.0, 0.0)
@@ -260,18 +222,8 @@ object Day20 {
             rotation += 90
             sidesNeeded = sidesNeeded.map { it.rotateCounterClockWise() }
         }
-
-        printPuzzle(puzzle)
-
-        // Now, recursively apply all matches
-        applyMatches(puzzle, startingTileLeftTop)
-
-
-
-        return productOfCornerPiecesIds to -1L
+        return startingTileLeftTop
     }
-
-    data class Orientation(val rotation: Int, val flippedHorizontally: Boolean)
 
     private fun applyMatches(puzzle: MutableSet<Point2D>, tile: Tile) {
         if (!tile.processed) {
@@ -292,23 +244,23 @@ object Day20 {
             val (matchingSide, matchingTile) = match
 
             println("Tile #${matchingTile.id}")
-            printPuzzle(matchingTile.points)
-            // find orientation of side
-            val orientation: Side =
-                side.rotate(tile.orientation.rotation)
-//                    .let { if (tile.orientation.flippedHorizontally) it.horizontalFlip() else it }
-
+//            printPuzzle(matchingTile.points)
+            // find orientation of side to match with
+            val orientation: Side = side.rotate(tile.orientation.rotation).let {
+                if (tile.orientation.flippedHorizontally && setOf(
+                        Side.LEFT,
+                        Side.FLEFT,
+                        Side.RIGHT,
+                        Side.FRIGHT
+                    ).contains(it)
+                ) it.horizontalFlip() else it
+            }
 
             val offset: Point2D = tile.offset + orientation.unitVector * 10
 
             println("Side $side (${tile.id}) matches with $matchingSide (*${matchingTile.id}) ")
             println("Side $side (${tile.id}) is oriented at $orientation")
             println("Offset for tile ${matchingTile.id} on side $side (${tile.id}) is $offset")
-
-
-            // try each orientation, to see if sticks?
-            // when does it stick?
-            // when opposing sides (#1 TOP - #2 BOTTOM, #1 FLEFT - #2 FRIGHT)
 
 
             // the tile's matching side is located at orientation X
@@ -323,19 +275,7 @@ object Day20 {
             println("Opposing side too find: $opposingSideToMatch")
 
 
-            val xRounded = offset.x.roundToInt()
-            val yRounded = offset.y.roundToInt()
-//                printPuzzle(
-//                    puzzle + matchingTile.points.map { it + offset },
-//                    Point2DInt(maxOf(0, xRounded - 10), maxOf(0, yRounded - 10)) to Point2DInt(
-//                        xRounded + 19,
-//                        yRounded + 19
-//                    )
-//                )
-
-
             // b) rotate until orientation found
-            // 2 options ->
             //      step 1) rotate until side reaches opposed side (or it flipped version)
             //      step 2) check if sides match.
             //              if so, okay
@@ -357,19 +297,13 @@ object Day20 {
             // filter edge
             val matchingTileSide = getSide(triedOrientation, rotatedPoints)
 
-            // get puzzle
-            // filter edge
-//                val tilePoints = puzzle.filter {
-//                    tile.offset.x <= it.x && it.x < tile.offset.x + 10 &&
-//                            tile.offset.y <= it.y && it.y < tile.offset.y + 10
-//                }
+            // Get tile points
             val tilePoints = puzzle.map { it - tile.offset }
             val tileSide = getSide(orientation, tilePoints)
 
             if (areOpposingSides(tileSide, matchingTileSide)) {
                 // yeah
-                println("No flip is needed")
-
+                println("No flip is needed (orientation: $triedOrientation , $foundOrientation) ")
             } else {
                 println("A flip is needed)")
                 //flip horizontally or vertically
@@ -384,52 +318,13 @@ object Day20 {
 
                     }
                     Side.TOP, Side.FTOP, Side.BOTTOM, Side.FBOTTOM -> {
-                        // vertically
+                        // horizontally
                         foundOrientation =
                             foundOrientation.copy(flippedHorizontally = !foundOrientation.flippedHorizontally)
                         triedOrientation = triedOrientation.horizontalFlip()
                     }
                 }
             }
-
-
-            // overlap edge with puzzle (intersection)
-            // check if intersection is same as edge
-
-
-            // get from puzzle
-
-
-//                tile.rotatedPoints(tile.orientation.rotation, tile.orientation.flippedHorizontally
-            // HELP
-
-//                findOrientation@ for (flipped in 0..1) {
-//                    for (rotation in 0..3) {
-//                        triedOrientation = matchingSide
-//                        if (flipped == 1) {
-//                            triedOrientation = triedOrientation.horizontalFlip()
-//                        }
-//                        triedOrientation = triedOrientation.rotate(rotation * 90)
-//
-//                        println("Trying orientation $triedOrientation")
-//                        val points: List<Point2D> =
-//                            matchingTile.rotatedPoints(rotation * 90, flipped == 1).map { it + offset }
-//                        getSide(opposingSideToMatch, points)
-////                        printPuzzle(
-////                            puzzle + points.toSet(),
-////                            Point2DInt(maxOf(0,xRounded - 10), maxOf(0,yRounded - 10)) to Point2DInt(xRounded + 20, yRounded + 20)
-////                        )
-//                        if (triedOrientation == opposingSideToMatch || triedOrientation.flipped() == opposingSideToMatch) {
-//                            // verify actual sides
-////                            val (side1, s) = tile.uniqueSides.first { listOf(side, side.flipped()).contains(it.first) }
-////                            val (side2, s2) = matchingTile.uni
-////                            println("Found orientation: ${rotation*90}°, flipped:${flipped==1} (matching side went from $matchingSide to $triedOrientation)")
-//                            foundOrientation = Orientation(rotation * 90, flippedHorizontally = flipped == 1)
-//                            break@findOrientation
-//                        }
-//                    }
-//
-//                }
 
             // triedOrientation is correct
             println("Found orientation: $foundOrientation (matching side went from $matchingSide to $triedOrientation)")
@@ -456,8 +351,8 @@ object Day20 {
     private fun areOpposingSides(tileSide1: List<Point2D>, otherTileSide1: List<Point2D>): Boolean {
         // direction same
 
-        val tileSide = tileSide1.map{it.toPoint2DInt()}.toList()
-        val otherTileSide = otherTileSide1.map{it.toPoint2DInt()}
+        val tileSide = tileSide1.map { it.toPoint2DInt() }.toList()
+        val otherTileSide = otherTileSide1.map { it.toPoint2DInt() }
         println("Checking if opposing sides: $tileSide and $otherTileSide")
         printPuzzleInt(tileSide, Point2DInt(0, 0) to Point2DInt(9, 9))
         printPuzzleInt(otherTileSide, Point2DInt(0, 0) to Point2DInt(9, 9))
@@ -491,39 +386,13 @@ object Day20 {
             else -> 0..9
         }
 
-        val sidePoints = tilePoints.filter { xRange.contains(it.x.roundToInt()) && yRange.contains(it.y.roundToInt()) }
-        return sidePoints
+        return tilePoints.filter { xRange.contains(it.x.roundToInt()) && yRange.contains(it.y.roundToInt()) }
 
-    }
-
-    private fun List<Point2D>.hasMatchingOpposingSide(side: Side, otherTilePoints: List<Point2D>): Boolean {
-        val currentSide = getSide(side, this)
-        val otherSide = getSide(side.opposed(), otherTilePoints)
-
-        printPuzzle(currentSide)
-        printPuzzle(otherSide)
-
-        val match =
-        //match left
-            // other x + 9
-            when (side) {
-                Side.RIGHT, Side.FRIGHT -> otherSide.map { it + Point2D(9.0, 0.0) }.equals(currentSide)
-                Side.TOP, Side.FTOP -> otherSide.map { it + Point2D(0.0, 9.0) }.equals(currentSide)
-                Side.LEFT, Side.FLEFT -> otherSide.map { it + Point2D(-9.0, 0.0) }.equals(currentSide)
-                Side.BOTTOM, Side.FBOTTOM -> otherSide.map { it + Point2D(0.0, -9.0) }.equals(currentSide)
-            }
-
-        return match
-    }
-
-    private fun determineSide(tile: Tile, second: String) {
-        TODO("Not yet implemented")
     }
 
     private fun determinePossibleNeighboursForTiles(tiles: List<Tile>) {
         for (i in tiles.indices) {
             val tile = tiles[i]
-//            if (tile.hasAMatchWithAnotherUniqueSide.filter { it.value }.size == 4) continue
 
             for (j in i + 1 until tiles.size) {
                 val checkTile = tiles[j]
@@ -560,11 +429,9 @@ object Day20 {
     }
 
 
-    private fun printPuzzleInt(roundedPuzzle: Iterable<Point2DInt>, bounds: Pair<Point2DInt, Point2DInt>? = null) {
-        var min: Point2DInt
-        var max: Point2DInt
-
-
+    private fun printPuzzleInt(roundedPuzzle: Iterable<Point2DInt>, bounds: Pair<Point2DInt, Point2DInt>? = null, withGaps: Boolean = true) {
+        val min: Point2DInt
+        val max: Point2DInt
         if (bounds == null) {
             min = roundedPuzzle.reduce { acc, p -> Point2DInt(minOf(acc.x, p.x), minOf(acc.y, p.y)) }
             max = roundedPuzzle.reduce { acc, p -> Point2DInt(maxOf(acc.x, p.x), maxOf(acc.y, p.y)) }
@@ -581,14 +448,14 @@ object Day20 {
         colRange.forEach {
             val tens = abs((it / 10) % 10)
             val modulo = abs(it % 10)
-            if (modulo == 0) print(" ")
+            if (withGaps && modulo == 0 ) print(" ")
             print("${if (tens > 0) tens else " "}")
         }
         println()
         print(" ".repeat(5))
         colRange.forEach {
             val modulo = abs(it % 10)
-            if (modulo == 0) print(" ")
+            if (withGaps && modulo == 0) print(" ")
             print(modulo)
         }
         println()
@@ -598,17 +465,18 @@ object Day20 {
             val y1 = "$y"
             print("$y${" ".repeat(5 - y1.length)}")
             for (x in colRange) {
-                if (x % 10 == 0) print(" ")
+                if (withGaps && x % 10 == 0) print(" ")
                 if (roundedPuzzle.contains(Point2DInt(x, y))) print("X") else print(".")
             }
             println()
-            if (y % 10 == 0) println()
+            if (withGaps && y % 10 == 0) println()
         }
 
     }
-    private fun printPuzzle(puzzle: Iterable<Point2D>, bounds: Pair<Point2DInt, Point2DInt>? = null) {
+
+    private fun printPuzzle(puzzle: Iterable<Point2D>, bounds: Pair<Point2DInt, Point2DInt>? = null, withGaps: Boolean  = true) {
         val roundedPuzzle = puzzle.map { it.toPoint2DInt() }
-        printPuzzleInt(roundedPuzzle, bounds)
+        printPuzzleInt(roundedPuzzle, bounds, withGaps)
 
     }
 
@@ -710,6 +578,5 @@ object Day20 {
 
 
 fun main() {
-
     Day20.solve()
 }
