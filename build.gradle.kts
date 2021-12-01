@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.20"
+    kotlin("jvm") version "1.6.0"
     application
 }
 
-group = "me.jvandis"
+group = "nl.zzave"
 version = "1.0-SNAPSHOT"
+java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
@@ -22,10 +23,14 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "1.8"
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        freeCompilerArgs = listOf("-Xjsr305=strict")
+        jvmTarget = "11"
+    }
 }
 
+
 application {
-    mainClassName = "day1.kt    "
+    mainClassName = "day1.kt"
 }

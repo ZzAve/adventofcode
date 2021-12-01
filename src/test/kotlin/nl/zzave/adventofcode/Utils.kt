@@ -1,4 +1,4 @@
-package nl.zzave.adventofcode.twentytwenty
+package nl.zzave.adventofcode
 
 import java.io.File
 
