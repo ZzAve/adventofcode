@@ -16,24 +16,22 @@ object Day1 {
     /**
      * An entry (list item) is deeper if it is larger then the previous entry
      */
-    private fun countDeeperEntries(depthMeasurements: List<Int>): Int {
-        return depthMeasurements.zipWithNext { a, b ->
+    private fun countDeeperEntries(depthMeasurements: List<Int>): Int = depthMeasurements
+        .zipWithNext { a, b ->
             println("a $a vs b $b (= ${a < b})")
-            if (a < b) 1 else 0
-        }.sum()
-    }
+            a < b
+        }
+        .count { it }
 
     fun solvePart2(input: List<String>): Int {
         val depthMeasurements: List<Int> = input.map { parseInt(it) }
-        println(depthMeasurements)
+        println("Depth measurements: $depthMeasurements")
 
-        val depths = depthMeasurements.windowed(size = 3).map { it.sum() }
-
-        println()
-        println(depths)
-
-        return countDeeperEntries(depths)
-
+        return depthMeasurements
+            .windowed(size = 4)
+            .map { it.first() < it.last() }
+            .also { println(it) }
+            .count { it }
     }
 }
 
