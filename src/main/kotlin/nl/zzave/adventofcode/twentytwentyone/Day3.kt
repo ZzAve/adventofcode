@@ -7,35 +7,39 @@ object Day3 : Problem<Int> {
 
 
     override fun solvePart1(input: List<String>): Int {
+        val numbers = input.map { it.toInt(2) }
+        val mostSignificantBit = numbers.maxOf { it }.takeHighestOneBit()
 
-        val bitOccurrences = input
-            .map { line ->
-                line.map { "$it".toInt() }
-                    .also { println(it) }
-            }
-            .reduce { acc, cur ->
-                acc.mapIndexed { index, i -> i + cur[index] }
-                    .also {
-                        println()
-                        println(acc)
-                        println(cur)
-                        println("====")
-                        println(it)
+        val bitOccurrences = findBitOccurrences(numbers, mostSignificantBit, mutableListOf())
+        println(bitOccurrences)
+        println()
 
-                    }
-            }
+        val gammaRate = bitOccurrences.foldIndexed(0) { index, acc, i ->
+            val isCommonBit: Int = if (i > input.size / 2.0) 1 else 0
+            acc + 2.shl(bitOccurrences.size - 2 - index) * isCommonBit
+        }
 
-        val gammaRate = bitOccurrences
-            .map { if (it > input.size / 2.0) 1 else 0 }
-            .joinToString("")
-            .toInt(2)
-
-        val epsilonRate = bitOccurrences
-            .map { if (it < input.size / 2.0) 1 else 0 }
-            .joinToString("")
-            .toInt(2)
+        println()
+        val epsilonRate = bitOccurrences.foldIndexed(0) { index, acc, i ->
+            val isUncommonBit: Int = if (i < input.size / 2.0) 1 else 0
+            acc + 1.shl(bitOccurrences.size - 1 - index) * isUncommonBit
+        }
 
         return gammaRate * epsilonRate
+    }
+
+    private tailrec fun findBitOccurrences(numbers: List<Int>, currentBit: Int, result: MutableList<Int>): List<Int> {
+        println("Finding occurrences of bit $currentBit (${currentBit.toString(2)})")
+
+        // Count only if nth bit (int defined by currentBit) is set.
+        result += numbers.count { it and currentBit == currentBit }
+        println(result)
+
+        return if (currentBit == 1) {
+            result
+        } else {
+            findBitOccurrences(numbers, currentBit / 2, result)
+        }
     }
 
 
@@ -52,7 +56,8 @@ object Day3 : Problem<Int> {
         println("Finding magic number ($strategy)")
         println(numbers)
         val highestSignificantBit = numbers.map { it.first }.maxOf { it.takeHighestOneBit() }
-        val occurrencesCommonBit = numbers.map { it.first }.count { it >= highestSignificantBit }.also { println("Occurrences common bit: $it") }
+        val occurrencesCommonBit = numbers.map { it.first }.count { it >= highestSignificantBit }
+            .also { println("Occurrences common bit: $it") }
 
         val filteredNumbers = when (strategy) {
             Strategy.LEAST_COMMON_BIT -> {
