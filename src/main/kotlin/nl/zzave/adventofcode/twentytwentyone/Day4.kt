@@ -1,26 +1,25 @@
 package nl.zzave.adventofcode.twentytwentyone
 
-import nl.zzave.adventofcode.Problem
 import nl.zzave.adventofcode.printMatrix
 import nl.zzave.adventofcode.transposeMatrix
 
-object Day4 : Problem<Int> {
+object Day4 : TwentyTwentyOneProblem<Int> {
     override var debugMode: Boolean = false
 
 
     override fun solvePart1(input: List<String>): Int {
-        val (numberToCall, bingoBoards) = input.toDomainModel()
+        val (numbersToCall, bingoBoards) = input.toDomainModel()
         bingoBoards.forEach { it.prettyPrint() }
 
-        val (winningBoard, calledNumbers) = callNumbersUntilBingo(numberToCall, bingoBoards)
+        val (winningBoard, calledNumbers) = callNumbersUntilBingo(numbersToCall, bingoBoards)
         return winningBoard?.calculateScore(calledNumbers) ?: -1
     }
 
     override fun solvePart2(input: List<String>): Int {
-        val (numberToCall, bingoBoards) = input.toDomainModel()
+        val (numbersToCall, bingoBoards) = input.toDomainModel()
 //        bingoBoards.forEach { it.prettyPrint() }
 
-        val (losingBoard, calledNumbers) = callNumbersReverseUntilNoBingo(numberToCall, bingoBoards)
+        val (losingBoard, calledNumbers) = callNumbersReverseUntilNoBingo(numbersToCall, bingoBoards)
         return losingBoard?.calculateScore(calledNumbers) ?: -1
 
     }

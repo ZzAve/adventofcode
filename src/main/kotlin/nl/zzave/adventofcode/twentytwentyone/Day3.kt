@@ -3,7 +3,7 @@ package nl.zzave.adventofcode.twentytwentyone
 import nl.zzave.adventofcode.Problem
 
 
-object Day3 : Problem<Int> {
+object Day3 : TwentyTwentyOneProblem<Int> {
     override var debugMode: Boolean = false
 
     override fun solvePart1(input: List<String>): Int {
@@ -16,7 +16,7 @@ object Day3 : Problem<Int> {
 
         val gammaRate = bitOccurrences.foldIndexed(0) { index, acc, i ->
             val isCommonBit: Int = if (i > input.size / 2.0) 1 else 0
-            acc + 2.shl(bitOccurrences.size - 2 - index) * isCommonBit
+            acc + 1.shl(bitOccurrences.size - 2 - index) * isCommonBit
         }
 
         println()

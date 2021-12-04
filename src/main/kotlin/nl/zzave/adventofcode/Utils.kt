@@ -1,6 +1,5 @@
 package nl.zzave.adventofcode
 
-import nl.zzave.adventofcode.twentytwentyone.getTwentyTwentyOneFile
 import java.io.File
 
 fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines()
@@ -8,26 +7,21 @@ fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines
 interface Problem<T> {
     var debugMode: Boolean;
 
-    fun log(message: Any?) {
-        println(message)
-    }
-
-    fun debug(message: Any?) {
-        if (debugMode) println(message)
-    }
+    fun log(message: Any?) = println(message)
+    fun debug(message: Any?) = if (debugMode) println(message) else Unit
 
     fun solvePart1(input: List<String>): T
     fun solvePart2(input: List<String>): T
+    fun getFile(filename: String): List<String>
 
     fun runSolution(filename: String) {
-        val input: List<String> = getTwentyTwentyOneFile(filename)
-        val solvePart1 = this.solvePart1(input)
-        println("Result part 1: $solvePart1")
+        val input: List<String> = getFile(filename)
+        val solutionPart1: T = this.solvePart1(input)
+        println("Result part 1: $solutionPart1")
 
-        val solvePart2 = this.solvePart2(input)
-        println("Result part 2: $solvePart2")
+        val solutionPart2 = this.solvePart2(input)
+        println("Result part 2: $solutionPart2")
     }
-
 }
 
 fun splitByEmptyEntry(input: List<String>): List<List<String>> {
@@ -87,12 +81,6 @@ inline fun <reified T> printMatrix(matrix: Iterable<Iterable<T>>) {
 }
 
 fun <T> prettyPrint(iterable: Iterable<T>) {
-    println("{")
-    iterable.forEach { println("\t $it") }
-    println("}")
-}
-
-fun <T> prettyPrintMatrix(iterable: Iterable<Iterable<T>>) {
     println("{")
     iterable.forEach { println("\t $it") }
     println("}")
