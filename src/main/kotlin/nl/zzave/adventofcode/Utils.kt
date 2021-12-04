@@ -1,12 +1,21 @@
 package nl.zzave.adventofcode
 
-import nl.zzave.adventofcode.twentytwentyone.Day3
 import nl.zzave.adventofcode.twentytwentyone.getTwentyTwentyOneFile
 import java.io.File
 
 fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines()
 
 interface Problem<T> {
+    var debugMode: Boolean;
+
+    fun log(message: Any?) {
+        println(message)
+    }
+
+    fun debug(message: Any?) {
+        if (debugMode) println(message)
+    }
+
     fun solvePart1(input: List<String>): T
     fun solvePart2(input: List<String>): T
 
@@ -71,13 +80,19 @@ fun printMatrixOfStrings(matrix: Iterable<String>) = printMatrix(matrix.map { it
 inline fun <reified T> printMatrix(matrix: Iterable<Iterable<T>>) {
     matrix.forEach { line ->
         line.forEach { c ->
-            print("$c")
+            print("$c".padStart(3))
         }
         println()
     }
 }
 
 fun <T> prettyPrint(iterable: Iterable<T>) {
+    println("{")
+    iterable.forEach { println("\t $it") }
+    println("}")
+}
+
+fun <T> prettyPrintMatrix(iterable: Iterable<Iterable<T>>) {
     println("{")
     iterable.forEach { println("\t $it") }
     println("}")

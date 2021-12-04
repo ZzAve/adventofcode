@@ -4,7 +4,7 @@ import nl.zzave.adventofcode.Problem
 
 
 object Day3 : Problem<Int> {
-
+    override var debugMode: Boolean = false
 
     override fun solvePart1(input: List<String>): Int {
         val numbers = input.map { it.toInt(2) }
@@ -28,6 +28,7 @@ object Day3 : Problem<Int> {
         return gammaRate * epsilonRate
     }
 
+
     private tailrec fun findBitOccurrences(numbers: List<Int>, currentBit: Int, result: MutableList<Int>): List<Int> {
         println("Finding occurrences of bit $currentBit (${currentBit.toString(2)})")
 
@@ -41,7 +42,6 @@ object Day3 : Problem<Int> {
             findBitOccurrences(numbers, currentBit / 2, result)
         }
     }
-
 
     override fun solvePart2(input: List<String>): Int {
         val numbers = input.map { it.toInt(2) }
@@ -93,12 +93,12 @@ object Day3 : Problem<Int> {
                 .let { findMagicNumber(it, strategy) }
         }
     }
-}
 
-enum class Strategy {
-    MOST_COMMON_BIT,
-    LEAST_COMMON_BIT
+    enum class Strategy {
+        MOST_COMMON_BIT,
+        LEAST_COMMON_BIT
 
+    }
 }
 
 fun main() {
