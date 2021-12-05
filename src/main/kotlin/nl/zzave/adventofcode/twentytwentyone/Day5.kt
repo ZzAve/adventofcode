@@ -52,7 +52,6 @@ object Day5 : TwentyTwentyOneProblem<Int> {
         val y: Int
     ) {
 
-
         fun expandTo(that: Coord, allowDiagonal: Boolean = false): Map<Coord, Int> = when {
             this.y == that.y -> (min(this.x, that.x)..max(this.x, that.x)).map { Coord(it, y) }
             this.x == that.x -> (min(this.y, that.y)..max(this.y, that.y)).map { Coord(x, it) }
@@ -79,7 +78,7 @@ object Day5 : TwentyTwentyOneProblem<Int> {
             this.y.absoluteValue / this.y
         )
 
-        private operator fun minus(that: Coord): Coord = Coord(that.x - this.x, that.y - this.y)
+        private operator fun minus(that: Coord): Coord = Coord(this.x - that.x, this.y - that.y)
     }
 }
 
@@ -87,7 +86,8 @@ object Day5 : TwentyTwentyOneProblem<Int> {
 fun main() {
     measureTime {
         Day5.debugMode = true
-        Day5.runSolution("day5-test.data")
+        Day5.testSolution("day5-test.data", 5, 12)
+        println("hi")
     }.also {
         println("Took ${it.inWholeMilliseconds}ms")
     }

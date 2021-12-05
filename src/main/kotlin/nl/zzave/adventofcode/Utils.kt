@@ -22,6 +22,18 @@ interface Problem<T> {
         val solutionPart2 = this.solvePart2(input)
         println("Result part 2: $solutionPart2")
     }
+
+    fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
+        val input: List<String> = getFile(filename)
+        val solutionPart1: T = this.solvePart1(input)
+        println("Result part 1: $solutionPart1, expected $expectedResultPart1")
+        check(solutionPart1 == expectedResultPart1) { "Part 1 actual result ($solutionPart1) doesn't match expected result ($expectedResultPart1)" }
+
+        val solutionPart2 = this.solvePart2(input)
+        println("Result part 2: $solutionPart2, expected $expectedResultPart2")
+        check(solutionPart2 == expectedResultPart2) { "Part 2 actual result ($solutionPart2) doesn't match expected result ($expectedResultPart2)" }
+    }
+
 }
 
 fun splitByEmptyEntry(input: List<String>): List<List<String>> {
@@ -90,6 +102,6 @@ fun <T> prettyPrint(iterable: Iterable<T>) {
     println("}")
 }
 
- fun < S, T> prettyPrint(map: Map<S, T>) {
+fun <S, T> prettyPrint(map: Map<S, T>) {
     prettyPrint(map.entries)
 }
