@@ -79,6 +79,10 @@ inline fun <reified T> printMatrix(matrix: Iterable<Iterable<T>>) {
         println()
     }
 }
+//inline fun <reified T> printMatrix(matrix: Map<Iterable<T>>) {
+//
+//}
+
 
 fun <T> prettyPrint(iterable: Iterable<T>) {
     println("{")
@@ -86,6 +90,6 @@ fun <T> prettyPrint(iterable: Iterable<T>) {
     println("}")
 }
 
-fun <S, T> prettyPrint(map: Map<S, T>) {
+ fun < S, T> prettyPrint(map: Map<S, T>) {
     prettyPrint(map.entries)
 }
