@@ -6,48 +6,38 @@ import kotlin.time.measureTime
 object Day6 : TwentyTwentyOneProblem<Long> {
     override var debugMode: Boolean = false
 
+    private const val RESET_DAYS = 6
+    private const val NEW_DAYS = 8
+
     override fun solvePart1(input: List<String>): Long {
-        val school = input.first().trim().split(",").map { it.toInt() }
+        val school = parseSchoolOfFish(input)
         log("After 0 days: $school")
 
-        val finalSchool = processDays(80, 80, school)
+        val finalSchool = simulateDays(80, 80, school)
         debug("After 80 days: $finalSchool")
-        return finalSchool.count().toLong()
+        return finalSchool.values.sum()
 
     }
 
     override fun solvePart2(input: List<String>): Long {
+        val school = parseSchoolOfFish(input)
+        log("After 0 days: $school")
+
+        val finalSchool = simulateDays(256, 256, school)
+        debug("After 256 days: $finalSchool")
+        return finalSchool.values.sum()
+    }
+
+    private fun parseSchoolOfFish(input: List<String>): MutableMap<Int, Long> {
         val school = mutableMapOf<Int, Long>()
         input.first().trim().split(",").forEach { fish ->
             val day = fish.toInt()
             school[day] = school[day]?.let { it + 1 } ?: 1
         }
-        log("After 0 days: $school")
-
-        val finalSchool = processDays2(256, 256, school)
-        debug("After 256 days: $finalSchool")
-        return finalSchool.values.fold(0L) { acc, cur -> acc + cur }
-
+        return school
     }
 
-    private tailrec fun processDays(initialDays: Int, daysLeft: Int, school: List<Int>): List<Int> {
-        if (daysLeft == 0) {
-            return school
-        }
-
-        val newSchool = school.flatMap {
-            when (it) {
-                0 -> listOf(6, 8)
-                else -> listOf(it - 1)
-            }
-        }
-
-        debug("After ${initialDays - (daysLeft - 1)} days (${newSchool.count()} fish): $newSchool")
-        return processDays(initialDays, daysLeft - 1, newSchool)
-
-    }
-
-    private tailrec fun processDays2(initialDays: Int, daysLeft: Int, schoolCounter: Map<Int, Long>): Map<Int, Long> {
+    private tailrec fun simulateDays(initialDays: Int, daysLeft: Int, schoolCounter: Map<Int, Long>): Map<Int, Long> {
         if (daysLeft == 0) {
             return schoolCounter
         }
@@ -56,15 +46,15 @@ object Day6 : TwentyTwentyOneProblem<Long> {
         schoolCounter.forEach { (days, count) ->
             when (days) {
                 0 -> {
-                    newSchool[6] = newSchool[6]?.let { it + count } ?: count
-                    newSchool[8] = count
+                    newSchool[RESET_DAYS] = newSchool.getOrDefault(RESET_DAYS, 0) + count
+                    newSchool[NEW_DAYS] = count
                 }
-                else -> newSchool[days - 1] = newSchool[days - 1]?.let { it + count } ?: count
+                else -> newSchool[days - 1] = newSchool.getOrDefault(days - 1, 0) + count
             }
         }
 
         debug("After ${initialDays - (daysLeft - 1)} days (${newSchool.values.sum()} fish): $newSchool")
-        return processDays2(initialDays, daysLeft - 1, newSchool)
+        return simulateDays(initialDays, daysLeft - 1, newSchool)
     }
 }
 
