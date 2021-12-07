@@ -35,14 +35,7 @@ object Day7 : TwentyTwentyOneProblem<Long> {
         var currentMinFuelPosition = 0L
 
         for (position in numbers.minOf { it }..numbers.maxOf { it }) {
-            val fuel = numbers.fold(0L) { acc, cur ->
-                val distance = (cur - position).absoluteValue
-                val cost = calculateCost(distance)
-                debug("From $cur to $position costs $cost fuel")
-                acc + cost
-            }
-
-            debug("Position $position costs $fuel fuel")
+            val fuel = calculateFuelCost(numbers, position, currentMinFuel)
             if (fuel < currentMinFuel) {
                 debug("Best so far! (position $position, fuel costs: $fuel")
                 currentMinFuel = fuel
@@ -54,19 +47,24 @@ object Day7 : TwentyTwentyOneProblem<Long> {
         return currentMinFuel
     }
 
-    private val costs = mutableMapOf<Long, Long>()
-    private fun calculateCost(distance: Long): Long =
-        when {
-            distance < 2 -> distance
-            costs[distance] != null -> costs[distance]!!
-            else -> costs.getOrElse(distance) {
-                val cost = distance + calculateCost(distance - 1)
-                costs[distance] = cost
-                cost
+    private fun calculateFuelCost(numbers: List<Long>, position: Long, runningMin: Long): Long {
+        var runningTotal = 0L
+        for (number in numbers) {
+            val distance = (number - position).absoluteValue
+            val cost = distance * (distance + 1) / 2
+            debug("From $number to $position costs $cost fuel")
+            runningTotal += cost
+
+            if (runningTotal > runningMin){
+                // Early break
+                return Long.MAX_VALUE
             }
         }
 
+        return runningTotal
+    }
 
+    private fun calculateCost(distance: Long): Long = (distance * (distance + 1)) / 2
 }
 
 fun main() {
