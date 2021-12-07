@@ -1,11 +1,13 @@
 package nl.zzave.adventofcode
 
 import java.io.File
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTime
 
 fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines()
 
 interface Problem<T> {
-    var debugMode: Boolean;
+    var debugMode: Boolean
 
     fun log(message: Any?) = println(message)
     fun debug(message: Any?) = if (debugMode) println(message) else Unit
@@ -14,24 +16,35 @@ interface Problem<T> {
     fun solvePart2(input: List<String>): T
     fun getFile(filename: String): List<String>
 
+    @OptIn(ExperimentalTime::class)
     fun runSolution(filename: String) {
         val input: List<String> = getFile(filename)
-        val solutionPart1: T = this.solvePart1(input)
-        println("Result part 1: $solutionPart1")
+        measureTime {
+            val solutionPart1: T = this.solvePart1(input)
+            println("Result part 1: $solutionPart1")
+        }.also { println("Took $it") }
 
-        val solutionPart2 = this.solvePart2(input)
-        println("Result part 2: $solutionPart2")
+        measureTime {
+            val solutionPart2 = this.solvePart2(input)
+            println("Result part 2: $solutionPart2")
+        }.also { println("Took $it") }
     }
 
+    @OptIn(ExperimentalTime::class)
     fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
         val input: List<String> = getFile(filename)
-        val solutionPart1: T = this.solvePart1(input)
-        println("Result part 1: $solutionPart1, expected $expectedResultPart1")
-        check(solutionPart1 == expectedResultPart1) { "Part 1 actual result ($solutionPart1) doesn't match expected result ($expectedResultPart1)" }
 
-        val solutionPart2 = this.solvePart2(input)
-        println("Result part 2: $solutionPart2, expected $expectedResultPart2")
-        check(solutionPart2 == expectedResultPart2) { "Part 2 actual result ($solutionPart2) doesn't match expected result ($expectedResultPart2)" }
+        measureTime {
+            val solutionPart1: T = this.solvePart1(input)
+            println("Result part 1: $solutionPart1, expected $expectedResultPart1")
+            check(solutionPart1 == expectedResultPart1) { "Part 1 actual result ($solutionPart1) doesn't match expected result ($expectedResultPart1)" }
+        }.also { println("Took $it") }
+
+        measureTime {
+            val solutionPart2 = this.solvePart2(input)
+            println("Result part 2: $solutionPart2, expected $expectedResultPart2")
+            check(solutionPart2 == expectedResultPart2) { "Part 2 actual result ($solutionPart2) doesn't match expected result ($expectedResultPart2)" }
+        }.also { println("Took $it") }
     }
 
 }
