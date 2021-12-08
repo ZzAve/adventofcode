@@ -55,7 +55,7 @@ object Day7 : TwentyTwentyOneProblem<Long> {
             debug("From $number to $position costs $cost fuel")
             runningTotal += cost
 
-            if (runningTotal > runningMin){
+            if (runningTotal > runningMin) {
                 // Early break
                 return Long.MAX_VALUE
             }
