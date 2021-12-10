@@ -18,6 +18,7 @@ interface Problem<T> {
 
     @OptIn(ExperimentalTime::class)
     fun runSolution(filename: String) {
+        this.debugMode=false
         val input: List<String> = getFile(filename)
         measureTime {
             val solutionPart1: T = this.solvePart1(input)
@@ -32,6 +33,7 @@ interface Problem<T> {
 
     @OptIn(ExperimentalTime::class)
     fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
+        this.debugMode = true
         val input: List<String> = getFile(filename)
 
         measureTime {
