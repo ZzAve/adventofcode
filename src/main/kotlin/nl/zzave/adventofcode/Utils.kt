@@ -1,5 +1,6 @@
 package nl.zzave.adventofcode
 
+import nl.zzave.adventofcode.twentytwentyone.Coord
 import java.io.File
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
@@ -103,7 +104,7 @@ inline fun <reified T> printMatrix(matrix: Iterable<Iterable<T>>) {
         line.forEach { c ->
             print("$c".padStart(3))
         }
-        println()
+        println("")
     }
 }
 //inline fun <reified T> printMatrix(matrix: Map<Iterable<T>>) {
@@ -120,3 +121,6 @@ fun <T> prettyPrint(iterable: Iterable<T>) {
 fun <S, T> prettyPrint(map: Map<S, T>) {
     prettyPrint(map.entries)
 }
+
+
+
