@@ -1,6 +1,8 @@
 package nl.zzave.adventofcode.twentytwentyone
 
 
+typealias Field  = Pair<Map<Coord, Int>, Long>
+
 object Day11 : TwentyTwentyOneProblem<Long> {
     override var debugMode: Boolean = true
 
@@ -38,7 +40,7 @@ object Day11 : TwentyTwentyOneProblem<Long> {
         return fieldAfterSimulation.second
     }
 
-    private fun simulateUntilFlash(days: Long, currentState: Map<Coord, Int>): Pair<Map<Coord, Int>, Long> {
+    private fun simulateUntilFlash(days: Long, currentState: Map<Coord, Int>): Field {
         val updatedState = currentState.mapValues { it.value + 1 }
             .let { startState -> flashRecursively(startState) }
             .let {
@@ -113,6 +115,7 @@ object Day11 : TwentyTwentyOneProblem<Long> {
     }
 
 }
+
 
 fun main() {
     Day11.testSolution("day11-test.data", 1656, 195)
