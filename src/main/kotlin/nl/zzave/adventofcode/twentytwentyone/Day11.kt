@@ -100,7 +100,7 @@ object Day11 : TwentyTwentyOneProblem<Long> {
         map { it.trim().toCharArray().map { c -> c.digitToInt() } }
             .flatMapIndexed { row: Int, rowEntries: List<Int> ->
                 rowEntries.mapIndexed { col, colEntry ->
-                    Coord(row, col) to colEntry
+                    Coord(col, row) to colEntry
                 }
             }
             .toMap()

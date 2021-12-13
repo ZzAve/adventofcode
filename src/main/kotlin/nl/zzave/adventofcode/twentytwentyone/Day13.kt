@@ -34,8 +34,8 @@ object Day13 : TwentyTwentyOneProblem<Long> {
 
             val negAbsolute = shifted.map {
                 when (instruction.axis) {
-                    X ->   it.copy(x = it.x.absoluteValue * -1)
-                    Y -> it.copy( y = it.y.absoluteValue * -1)
+                    X -> it.copy(x = it.x.absoluteValue * -1)
+                    Y -> it.copy(y = it.y.absoluteValue * -1)
                 }
 
             }.toSet()
@@ -57,9 +57,6 @@ object Day13 : TwentyTwentyOneProblem<Long> {
                 }
             }
 
-            prettyPrint(
-                newPaper.map { Coord(it.x , it.y )}.toSet(), "X", " ", padStart = 1
-            )
             println()
             newPaper.toSet()
         }
@@ -87,23 +84,14 @@ object Day13 : TwentyTwentyOneProblem<Long> {
     override fun solvePart2(input: List<String>): Long {
         val (paper: Set<Coord>, instructions: List<FoldInstruction>) = parsePaper(input)
 
-//        prettyPrint(paper, "X", "-")
         val newPaper = foldLikeACrazyElf(instructions, paper)
         println(newPaper)
 
         val maxOfx = newPaper.maxOf { it.x }
         val maxOfy = newPaper.maxOf { it.y }
-        log("Size: $maxOfx to $maxOfy")
-//        for (letter in 0..maxOfx step maxOfx / 8) {
-//            val letterCoords = newPaper.filter { it.x >= letter && it.x <= letter + maxOfx }
-//            prettyPrint(
-//                letterCoords.map { Coord(it.x / 15, it.y / 15) }.toSet(), "X", "-", padStart = 4
-//            )
 
-//        }
-        prettyPrint(
-                newPaper.map { Coord(it.x , it.y )}.toSet(), "X", " ", padStart = 1
-            )
+        log("Size: $maxOfx to $maxOfy")
+        prettyPrint(newPaper.toSet(), "X", " ", padStart = 2)
 
         return -1
 

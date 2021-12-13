@@ -27,10 +27,10 @@ data class Coord(
 }
 
 
-fun <T> prettyPrint(map: Map<Coord, T>, default: String =  " ", padding: Char = ' ', padStart:Int = 1) {
-    for (x in map.keys.minOf { it.x }..map.keys.maxOf { it.x }) {
-        for (y in map.keys.minOf { it.y }..map.keys.maxOf { it.y }) {
-            print("${map[Coord(x,y)] ?: default}".padStart(padStart, padding))
+fun <T> prettyPrint(map: Map<Coord, T>, default: String = " ", padding: Char = ' ', padStart: Int = 1) {
+    for (y in map.keys.minOf { it.y }..map.keys.maxOf { it.y }) {
+        for (x in map.keys.minOf { it.x }..map.keys.maxOf { it.x }) {
+            print("${map[Coord(x, y)] ?: default}".padStart(padStart, padding))
         }
         println("")
     }
@@ -38,10 +38,16 @@ fun <T> prettyPrint(map: Map<Coord, T>, default: String =  " ", padding: Char = 
 }
 
 
-fun prettyPrint(coords: Set<Coord>, present: String = "X", absent: String =  "-", padding: Char = ' ', padStart:Int = 1) {
-    for (x in coords.minOf { it.x }..coords.maxOf { it.x }) {
-        for (y in coords.minOf { it.y }..coords.maxOf { it.y }) {
-            print((if (coords.contains(Coord(x,y))) present else absent).padStart(padStart, padding))
+fun prettyPrint(
+    coords: Set<Coord>,
+    present: String = "X",
+    absent: String = "-",
+    padding: Char = ' ',
+    padStart: Int = 1
+) {
+    for (y in coords.minOf { it.y }..coords.maxOf { it.y }) {
+        for (x in coords.minOf { it.x }..coords.maxOf { it.x }) {
+            print((if (coords.contains(Coord(x, y))) present else absent).padStart(padStart, padding))
         }
         println("")
     }
