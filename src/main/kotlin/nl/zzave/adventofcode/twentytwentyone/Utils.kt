@@ -36,3 +36,14 @@ fun <T> prettyPrint(map: Map<Coord, T>, default: String =  " ", padding: Char = 
     }
     println("")
 }
+
+
+fun prettyPrint(coords: Set<Coord>, present: String = "X", absent: String =  "-", padding: Char = ' ', padStart:Int = 1) {
+    for (x in coords.minOf { it.x }..coords.maxOf { it.x }) {
+        for (y in coords.minOf { it.y }..coords.maxOf { it.y }) {
+            print((if (coords.contains(Coord(x,y))) present else absent).padStart(padStart, padding))
+        }
+        println("")
+    }
+    println("")
+}
