@@ -25,8 +25,8 @@ object Day8 : TwentyTwentyOneProblem<Long> {
 
     private fun findMapping(display: Display): Int {
 
-        debug("----------------")
-        debug("Finding mapping for $display")
+        debugln("----------------")
+        debugln("Finding mapping for $display")
         val numberMapping = mutableMapOf<Int, Set<Char>>()
         val one = display.signalPattern.first { it.size == 2 }.also { numberMapping[1] = it }
         val four = display.signalPattern.first { it.size == 4 }.also { numberMapping[4] = it }
@@ -45,8 +45,8 @@ object Day8 : TwentyTwentyOneProblem<Long> {
         // From 1 and 7, you can derive the top
         val top: Char = (seven - one).first()
         positionMapping[Position.TOP] = top
-        debug("$numberMapping")
-        debug("$positionMapping")
+        debugln("$numberMapping")
+        debugln("$positionMapping")
 
         // From 4 and 1 you can derive center and top left
         val centerAndTopLeft: Set<Char> = (four - one)
@@ -87,8 +87,8 @@ object Day8 : TwentyTwentyOneProblem<Long> {
         val topRight = eight - six
         check(topRight.size == 1)
         positionMapping[Position.TOP_RIGHT] = topRight.first()
-        debug("$numberMapping")
-        debug("$positionMapping")
+        debugln("$numberMapping")
+        debugln("$positionMapping")
 
 
         // five, two, and three all have 5 signals
@@ -106,11 +106,11 @@ object Day8 : TwentyTwentyOneProblem<Long> {
                     it.contains(positionMapping[Position.BOTTOM_LEFT])
         }.also { numberMapping[2] = it }
 
-        debug("Mapped everything but 3?")
+        debugln("Mapped everything but 3?")
         check(numberMapping.size == 9)
         check(numberMapping[3] == null)
-        debug("$numberMapping")
-        debug("$positionMapping")
+        debugln("$numberMapping")
+        debugln("$positionMapping")
 
         display.signalPattern.first {
             !numberMapping.values.contains(it) &&
@@ -120,15 +120,15 @@ object Day8 : TwentyTwentyOneProblem<Long> {
 
         }.also { numberMapping[3] = it }
 
-        debug("Unique mapping: $numberMapping")
+        debugln("Unique mapping: $numberMapping")
         // Final mapping
         return display.code.map {
             numberMapping.entries
                 .first { e -> e.value == it }
-                .also { debug("${it.value}: ${it.key}") }
+                .also { debugln("${it.value}: ${it.key}") }
                 .key
         }.reduce { acc, i -> acc * 10 + i }
-            .also { d -> log("${display.code.map{ it.joinToString("")}} : $d") }
+            .also { d -> logln("${display.code.map{ it.joinToString("")}} : $d") }
     }
 
     private fun parseDisplayInput(input: List<String>): List<Display> = input
@@ -136,7 +136,7 @@ object Day8 : TwentyTwentyOneProblem<Long> {
             val (signals, code) = line.split("|")
             val signalPattern = signals.trim().split(" ").map { it.sorted() }
             val fourDigitCode = code.trim().split(" ").map { it.sorted() }
-            Display(signalPattern, fourDigitCode).also { debug("$it") }
+            Display(signalPattern, fourDigitCode).also { debugln("$it") }
         }
 
 

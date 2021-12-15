@@ -22,7 +22,7 @@ object Day4 : TwentyTwentyOneProblem<Int> {
         .asSequence()
         .drop(1)
         .map { calledNumbersSoFar ->
-            debug("Processing ${calledNumbersSoFar.last()} ($calledNumbersSoFar)")
+            debugln("Processing ${calledNumbersSoFar.last()} ($calledNumbersSoFar)")
             bingoBoards.firstOrNull { it.hasBingo(calledNumbersSoFar) } to calledNumbersSoFar
         }
         .firstOrNull { it.first != null }
@@ -44,7 +44,7 @@ object Day4 : TwentyTwentyOneProblem<Int> {
             .runningFold(numbersToCall) { calledNumbers, newNumber -> calledNumbers - listOf(newNumber) }
             .asSequence()
             .map { calledNumbersSoFar ->
-                debug("Processing ${calledNumbersSoFar[calledNumbersSoFar.size - 2]} ($calledNumbersSoFar)")
+                debugln("Processing ${calledNumbersSoFar[calledNumbersSoFar.size - 2]} ($calledNumbersSoFar)")
                 bingoBoards.firstOrNull { !it.hasBingo(calledNumbersSoFar - listOf(calledNumbersSoFar.last())) } to calledNumbersSoFar
             }
             .firstOrNull { it.first != null }
@@ -63,15 +63,15 @@ object Day4 : TwentyTwentyOneProblem<Int> {
      */
     private fun List<String>.toDomainModel(): Pair<List<Int>, List<BingoBoard>> {
         val calledNumbers: List<Int> =
-            this.first().split(",").map { it.toInt() }.also { log("Numbers to call: $it") }
+            this.first().split(",").map { it.toInt() }.also { logln("Numbers to call: $it") }
 
         val bingoBoards: List<BingoBoard> = this.drop(1).windowed(size = 6, step = 6) // 1 emptyline, 5 board lines
             .map { list ->
-                debug(list)
+                debugln(list)
                 val map: List<List<Int>> = list.drop(1)
                     .map { line ->
                         line.trim().split("\\s+".toRegex())
-                            .also { debug(it) }
+                            .also { debugln(it) }
                             .map { it.toInt() }
                     }
                 BingoBoard(map, transposeMatrix(map, 0))
@@ -90,26 +90,26 @@ object Day4 : TwentyTwentyOneProblem<Int> {
 
         fun hasBingo(calledNumbers: List<Int>): Boolean {
             val aRowHasBingo: Boolean = board.fold(false) { acc, row ->
-                acc || calledNumbers.containsAll(row).also { debug("Row $row makes bingo?\t$it ") }
+                acc || calledNumbers.containsAll(row).also { debugln("Row $row makes bingo?\t$it ") }
             }
 
             return aRowHasBingo || transposedBoard.fold(false) { acc, col ->
-                acc || calledNumbers.containsAll(col).also { debug("Column $col makes bingo?\t$it") }
+                acc || calledNumbers.containsAll(col).also { debugln("Column $col makes bingo?\t$it") }
             }
         }
 
         fun calculateScore(calledNumbers: List<Int>): Int {
             val unmarkedNumbers =
                 board.fold(0) { total, row -> total + row.filter { !calledNumbers.contains(it) }.sum() }
-            log("Sum of unmarked numbers: $unmarkedNumbers")
-            log("Last number called: ${calledNumbers.last()}")
+            logln("Sum of unmarked numbers: $unmarkedNumbers")
+            logln("Last number called: ${calledNumbers.last()}")
             return unmarkedNumbers * calledNumbers.last()
         }
 
         fun prettyPrint() {
-            log("--- BingoBoard ---")
+            logln("--- BingoBoard ---")
             printMatrix(this.board)
-            log("------------------")
+            logln("------------------")
         }
     }
 }

@@ -8,7 +8,7 @@ object Day9 : TwentyTwentyOneProblem<Long> {
 
 
         return findLowPoints(elevationMap)
-            .also { debug("Found low points $it") }
+            .also { debugln("Found low points $it") }
             .values.sumOf { it + 1L }
     }
 
@@ -18,12 +18,12 @@ object Day9 : TwentyTwentyOneProblem<Long> {
 
         // Assume all basin can run to 9 (and therefore not overlap)
         return lowPoints.map { (coord, _) ->
-            log("")
-            debug("----------------------")
-            log("Exploring basin for low point $coord")
-            debug("----------------------")
+            logln("")
+            debugln("----------------------")
+            logln("Exploring basin for low point $coord")
+            debugln("----------------------")
             addToBasinRecursively(coord, elevationMap)
-                .also { log("Basin @ $coord: $it") }
+                .also { logln("Basin @ $coord: $it") }
         }.map { it.count() }
             .sortedDescending()
             .take(3)
@@ -35,7 +35,7 @@ object Day9 : TwentyTwentyOneProblem<Long> {
         elevationMap: Map<Coord, Int>,
         basin: MutableMap<Coord, Int> = mutableMapOf()
     ): MutableMap<Coord, Int> {
-        debug("Exploring basin expansion from $coord (current basin $basin)")
+        debugln("Exploring basin expansion from $coord (current basin $basin)")
 
         val currentHeight = elevationMap[coord] ?: 10
         if (currentHeight > 8) return basin
@@ -44,25 +44,25 @@ object Day9 : TwentyTwentyOneProblem<Long> {
         // coords to inspect
         val leftCoord = coord.copy(x = coord.x - 1)
         if (isPartOfBasin(leftCoord, currentHeight, elevationMap, basin)) {
-            debug("Found $leftCoord to be part of the current basin")
+            debugln("Found $leftCoord to be part of the current basin")
             basin.putAll(addToBasinRecursively(leftCoord, elevationMap, basin))
         }
 
         val rightCoord = coord.copy(x = coord.x + 1)
         if (isPartOfBasin(rightCoord, currentHeight, elevationMap, basin)) {
-            debug("Found $rightCoord to be part of the current basin")
+            debugln("Found $rightCoord to be part of the current basin")
             basin.putAll(addToBasinRecursively(rightCoord, elevationMap, basin))
         }
 
         val downCoord = coord.copy(y = coord.y - 1)
         if (isPartOfBasin(downCoord, currentHeight, elevationMap, basin)) {
-            debug("Found $downCoord to be part of the current basin")
+            debugln("Found $downCoord to be part of the current basin")
             basin.putAll(addToBasinRecursively(downCoord, elevationMap, basin))
         }
 
         val upCoord = coord.copy(y = coord.y + 1)
         if (isPartOfBasin(upCoord, currentHeight, elevationMap, basin)) {
-            debug("Found $upCoord to be part of the current basin")
+            debugln("Found $upCoord to be part of the current basin")
             basin.putAll(addToBasinRecursively(upCoord, elevationMap, basin))
         }
 
@@ -89,7 +89,7 @@ object Day9 : TwentyTwentyOneProblem<Long> {
 
     private fun toElevationMap(input: List<String>): Map<Coord, Int> = input
         .flatMapIndexed { row, it ->
-            debug("Mapping $it")
+            debugln("Mapping $it")
             it.trim().toCharArray()
                 .mapIndexed { col, height -> Coord(col, row) to height.digitToInt() }
         }

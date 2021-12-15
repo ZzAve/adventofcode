@@ -22,8 +22,8 @@ object Day11 : TwentyTwentyOneProblem<Long> {
             .let { startState -> flashRecursively(startState) }
             .also { updatedFlashes += it.count { e -> e.value == 0 } }
 
-        debug("With ${days - 1} days to go (flashes: $updatedFlashes)")
-        debug(prettyPrint(updatedState))
+        debugln("With ${days - 1} days to go (flashes: $updatedFlashes)")
+        debugln(prettyPrint(updatedState))
 
         return simulate(days - 1, updatedState, updatedFlashes)
     }
@@ -31,9 +31,9 @@ object Day11 : TwentyTwentyOneProblem<Long> {
 
     override fun solvePart2(input: List<String>): Long {
         val field = input.parseToDomain()
-        log("Starting")
+        logln("Starting")
         prettyPrint(field)
-        log("------")
+        logln("------")
 
         val fieldAfterSimulation = simulateUntilFlash(0, field)
 
@@ -46,14 +46,14 @@ object Day11 : TwentyTwentyOneProblem<Long> {
             .let {
                 // Do we need to break?
                 if (it.size == it.count { e -> e.value == 0 }) {
-                    log("After ${days + 1} days")
+                    logln("After ${days + 1} days")
                     prettyPrint(it, padStart = 3)
                     return it to days + 1
                 }
                 it
             }
 
-        log("After ${days + 1} days")
+        logln("After ${days + 1} days")
         prettyPrint(updatedState, padStart = 3)
 
         return simulateUntilFlash(days + 1, updatedState)

@@ -11,20 +11,20 @@ object Day6 : TwentyTwentyOneProblem<Long> {
 
     override fun solvePart1(input: List<String>): Long {
         val school = parseSchoolOfFish(input)
-        log("After 0 days: $school")
+        logln("After 0 days: $school")
 
         val finalSchool = simulateDays(80, 80, school)
-        debug("After 80 days: $finalSchool")
+        debugln("After 80 days: $finalSchool")
         return finalSchool.values.sum()
 
     }
 
     override fun solvePart2(input: List<String>): Long {
         val school = parseSchoolOfFish(input)
-        log("After 0 days: $school")
+        logln("After 0 days: $school")
 
         val finalSchool = simulateDays(256, 256, school)
-        debug("After 256 days: $finalSchool")
+        debugln("After 256 days: $finalSchool")
         return finalSchool.values.sum()
     }
 
@@ -53,7 +53,7 @@ object Day6 : TwentyTwentyOneProblem<Long> {
             }
         }
 
-        debug("After ${initialDays - (daysLeft - 1)} days (${newSchool.values.sum()} fish): $newSchool")
+        debugln("After ${initialDays - (daysLeft - 1)} days (${newSchool.values.sum()} fish): $newSchool")
         return simulateDays(initialDays, daysLeft - 1, newSchool)
     }
 }

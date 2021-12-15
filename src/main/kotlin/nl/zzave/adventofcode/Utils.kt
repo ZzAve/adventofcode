@@ -10,8 +10,10 @@ fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines
 interface Problem<T> {
     var debugMode: Boolean
 
-    fun log(message: Any?) = println(message)
-    fun debug(message: Any?) = if (debugMode) println(message) else Unit
+    fun logln(message: Any?) = println(message)
+    fun log(message: Any?) = print(message)
+    fun debugln(message: Any?) = if (debugMode) println(message) else Unit
+    fun debug(message: Any?) = if (debugMode) print(message) else Unit
 
     fun solvePart1(input: List<String>): T
     fun solvePart2(input: List<String>): T

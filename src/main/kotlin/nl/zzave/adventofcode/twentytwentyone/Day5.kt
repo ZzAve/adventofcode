@@ -18,8 +18,8 @@ object Day5 : TwentyTwentyOneProblem<Int> {
     }
 
     override fun solvePart2(input: List<String>): Int {
-        repeat(10) { debug(" v") }
-        debug("----- PART 2 -- ")
+        repeat(10) { debugln(" v") }
+        debugln("----- PART 2 -- ")
         val grid = input.toDomain(allowDiagonal = true)
         return grid.count { it.value > 1 }
 
@@ -29,9 +29,9 @@ object Day5 : TwentyTwentyOneProblem<Int> {
         val (coord1, coord2) = parseLineDescription(it)
 
         coord1.expandTo(coord2, allowDiagonal)
-            .also { expandedCoords -> debug("Expanding $coord1 to $coord2 to $expandedCoords ") }
+            .also { expandedCoords -> debugln("Expanding $coord1 to $coord2 to $expandedCoords ") }
     }.reduce { acc, line ->
-        debug("Reducing $acc and $line")
+        debugln("Reducing $acc and $line")
         val mutableAcc = acc.toMutableMap()
         line.map { (key, value) ->
             mutableAcc[key] = mutableAcc[key]?.let { it + value } ?: 1
@@ -63,10 +63,10 @@ object Day5 : TwentyTwentyOneProblem<Int> {
                         this.x + it * direction.x,
                         this.y + it * direction.y
                     )
-                        .also { coord -> debug("Expanding $this to $that, found $coord") }
+                        .also { coord -> debugln("Expanding $this to $that, found $coord") }
                 }
             }
-            else -> emptyList<Coord>().also { debug("Skipping expansion from $this to $that") }
+            else -> emptyList<Coord>().also { debugln("Skipping expansion from $this to $that") }
         }.fold(mutableMapOf()) { acc, coord ->
             acc[coord] = acc[coord]?.let { it + 1 } ?: 1
             acc

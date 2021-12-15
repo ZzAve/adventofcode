@@ -7,18 +7,18 @@ object Day14 : TwentyTwentyOneProblem<Long> {
 
     override fun solvePart1(input: List<String>): Long {
         val (monomer, transformations) = parseInput(input)
-        log("Monomer: $monomer")
-        log("Allowed transformation: $transformations")
+        logln("Monomer: $monomer")
+        logln("Allowed transformation: $transformations")
 
         val times = 10
         val elementsByOccurrence = breadthFirstSearch(monomer, transformations, times)
 
-        log(elementsByOccurrence.toSortedMap())
-        log(elementsByOccurrence.values.sorted())
+        logln(elementsByOccurrence.toSortedMap())
+        logln(elementsByOccurrence.values.sorted())
         val maxOf = elementsByOccurrence.maxOf { it.value }
         val minOf = elementsByOccurrence.minOf { it.value }
         val toLong = (maxOf - elementsByOccurrence.values.sorted()[1]).toLong()
-        log("Max: $maxOf - Min:$minOf = ${maxOf - minOf} (vs long: $toLong)")
+        logln("Max: $maxOf - Min:$minOf = ${maxOf - minOf} (vs long: $toLong)")
         return (maxOf - minOf).toLong()
     }
 
@@ -31,7 +31,7 @@ object Day14 : TwentyTwentyOneProblem<Long> {
         var polymer = monomer
 
         repeat(times) {
-            debug("On step ${it}:\t$polymer")
+            debugln("On step ${it}:\t$polymer")
 
             polymer = listOf(polymer[0]) + polymer.map { it }.zipWithNext { a, b ->
                 transformations.firstOrNull { it.left == a && it.right == b }
@@ -41,8 +41,8 @@ object Day14 : TwentyTwentyOneProblem<Long> {
 
             val tmp = polymer.groupBy { it }.mapValues { it.value.size }
 
-            debug(tmp.toSortedMap())
-            debug(tmp.values.sorted())
+            debugln(tmp.toSortedMap())
+            debugln(tmp.values.sorted())
 
         }
 
@@ -52,8 +52,8 @@ object Day14 : TwentyTwentyOneProblem<Long> {
 
     override fun solvePart2(input: List<String>): Long {
         val (monomer, transformations) = parseInput(input)
-        log("Monomer: $monomer")
-        log("Allowed transformation: $transformations")
+        logln("Monomer: $monomer")
+        logln("Allowed transformation: $transformations")
 
         // Given a pair, determine the result after 40 days.
         val occurrences: MutableMap<Char, BigInteger> = mutableMapOf(monomer.first() to BigInteger.ONE)
@@ -64,12 +64,12 @@ object Day14 : TwentyTwentyOneProblem<Long> {
                 }
             }
 
-        log(occurrences.toSortedMap())
-        log(occurrences.values.sorted())
+        logln(occurrences.toSortedMap())
+        logln(occurrences.values.sorted())
         val maxOf = occurrences.maxOf { it.value }
         val minOf = occurrences.minOf { it.value }
         val toLong = (maxOf - minOf).toLong()
-        log("Max: $maxOf - Min:$minOf = ${maxOf - minOf} (vs long: $toLong)")
+        logln("Max: $maxOf - Min:$minOf = ${maxOf - minOf} (vs long: $toLong)")
 
         val pairOccurrences: MutableMap<Pair<Char, Char>, BigInteger> = mutableMapOf()
         monomer.zipWithNext { a, b -> calculatePairOccurrences(a to b, transformations, 40) }
@@ -79,7 +79,7 @@ object Day14 : TwentyTwentyOneProblem<Long> {
                 }
             }
 
-        log(pairOccurrences.toSortedMap { a, b -> a.first - b.first })
+        logln(pairOccurrences.toSortedMap { a, b -> a.first - b.first })
         // total occurences:
         val totalOccurrences = pairOccurrences
             .map { (key, value) -> key.second to value }
@@ -90,13 +90,13 @@ object Day14 : TwentyTwentyOneProblem<Long> {
         // Add very first
         totalOccurrences[monomer.first()] =( totalOccurrences[monomer.first()]?: BigInteger.ZERO) + BigInteger.ONE
 
-        log(totalOccurrences.toSortedMap())
-        log(totalOccurrences.values.sorted())
+        logln(totalOccurrences.toSortedMap())
+        logln(totalOccurrences.values.sorted())
 
         val max2 = totalOccurrences.maxOf { it.value }
         val min2 = totalOccurrences.minOf { it.value }
 
-        log("Max2: $max2 - Min2:$min2 = ${max2 - min2}")
+        logln("Max2: $max2 - Min2:$min2 = ${max2 - min2}")
 
 
 
@@ -156,8 +156,8 @@ object Day14 : TwentyTwentyOneProblem<Long> {
 
         // save entry to cache
         pairCache[pair to repeat] = newOccurrences
-        if(repeat%4==0) log("Pair $pair, repeat $repeat:\t$newOccurrences")
-        else debug("Pair $pair, repeat $repeat:\t$newOccurrences")
+        if(repeat%4==0) logln("Pair $pair, repeat $repeat:\t$newOccurrences")
+        else debugln("Pair $pair, repeat $repeat:\t$newOccurrences")
         return newOccurrences
     }
 
@@ -197,7 +197,7 @@ object Day14 : TwentyTwentyOneProblem<Long> {
         // save entry to cache
         cache[pair to repeat] = occurrences
 
-        debug("Pair $pair, repeat $repeat:\t$occurrences")
+        debugln("Pair $pair, repeat $repeat:\t$occurrences")
         return occurrences
 
     }

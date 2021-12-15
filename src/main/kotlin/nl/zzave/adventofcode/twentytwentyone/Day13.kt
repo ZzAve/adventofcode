@@ -22,7 +22,7 @@ object Day13 : TwentyTwentyOneProblem<Long> {
         paper: Set<Coord>
     ): Set<Coord> {
         val newPaper = instructions.fold(paper) { currentPaper, instruction ->
-            log("Applying $instruction")
+            logln("Applying $instruction")
             if (debugMode) prettyPrint(currentPaper, "X", "-")
 
             val shifted = currentPaper.map {
@@ -90,7 +90,7 @@ object Day13 : TwentyTwentyOneProblem<Long> {
         val maxOfx = newPaper.maxOf { it.x }
         val maxOfy = newPaper.maxOf { it.y }
 
-        log("Size: $maxOfx to $maxOfy")
+        logln("Size: $maxOfx to $maxOfy")
         prettyPrint(newPaper.toSet(), "X", " ", padStart = 2)
 
         return -1

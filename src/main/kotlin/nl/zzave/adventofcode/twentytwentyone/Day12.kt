@@ -1,5 +1,7 @@
 package nl.zzave.adventofcode.twentytwentyone
 
+import nl.zzave.adventofcode.twentytwentyone.Day12.Node
+
 typealias Edge = Pair<Node, Node>
 
 object Day12 : TwentyTwentyOneProblem<Int> {
@@ -7,8 +9,8 @@ object Day12 : TwentyTwentyOneProblem<Int> {
 
     override fun solvePart1(input: List<String>): Int {
         val graph = parseInput(input)
-        log("Graph:")
-        log(graph)
+        logln("Graph:")
+        logln(graph)
 
         val allRoutes = traverseGraph(graph)
 
@@ -56,22 +58,22 @@ object Day12 : TwentyTwentyOneProblem<Int> {
         val hasASmallCaveBeenVisitedMultipleTimes = path
             .map { it.second }
             .filter { it.isSmall() }
-            .also {debug("${logIndent}Small caves visited: $it" )  }
+            .also { debugln("${logIndent}Small caves visited: $it") }
             .let { it.size != it.toSet().size }
 
         val resultingPaths = mutableListOf<List<Edge>>()
         possibilities
-            .also { debug("${logIndent}Exploring possibilities for $path: $it" )}
+            .also { debugln("${logIndent}Exploring possibilities for $path: $it") }
             .filter { !it.second.isStart() }
-            .filter { it.second.isLarge() || path.none { e -> e.first == it.second  } || !hasASmallCaveBeenVisitedMultipleTimes }
+            .filter { it.second.isLarge() || path.none { e -> e.first == it.second } || !hasASmallCaveBeenVisitedMultipleTimes }
             .forEach {
-                debug("${logIndent}Found valid edge $it for $path")
+                debugln("${logIndent}Found valid edge $it for $path")
                 val updatedPaths: List<List<Edge>?> = traverseGraphWithDuplication(graph, it.second, path + it)
                 val elements = updatedPaths.mapNotNull { p -> p }
                 resultingPaths.addAll(elements)
-        }
+            }
 
-        debug("${logIndent}From: $path, found complete paths (first 100): ${resultingPaths.take(100)}")
+        debugln("${logIndent}From: $path, found complete paths (first 100): ${resultingPaths.take(100)}")
         return resultingPaths
 
 
@@ -97,33 +99,33 @@ object Day12 : TwentyTwentyOneProblem<Int> {
 
     override fun solvePart2(input: List<String>): Int {
         val graph = parseInput(input)
-        log("Graph:")
-        log(graph)
+        logln("Graph:")
+        logln(graph)
 
         val allRoutes = traverseGraphWithDuplication(graph)
 
         return allRoutes.toSet().count()
     }
 
-}
 
-data class Node(
-    val value: String,
-) {
-    fun isSmall(): Boolean = value.lowercase() == value
-    fun isLarge(): Boolean = value.uppercase() == value
-    fun isEnd(): Boolean = value == "end"
-    fun isStart(): Boolean = value == "start"
+    data class Node(
+        val value: String,
+    ) {
+        fun isSmall(): Boolean = value.lowercase() == value
+        fun isLarge(): Boolean = value.uppercase() == value
+        fun isEnd(): Boolean = value == "end"
+        fun isStart(): Boolean = value == "start"
 
-    override fun toString(): String {
-        return value
+        override fun toString(): String {
+            return value
+        }
     }
-}
 
-data class Graph(
-    val nodes: Set<Node>,
-    val edges: Set<Edge>
-)
+    data class Graph(
+        val nodes: Set<Node>,
+        val edges: Set<Edge>
+    )
+}
 
 
 fun main() {

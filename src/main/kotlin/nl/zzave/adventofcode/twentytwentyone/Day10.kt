@@ -9,7 +9,7 @@ object Day10 : TwentyTwentyOneProblem<Long> {
         return input
             .map { it.toCharArray() }
             .mapNotNull { it.corruptedChar() }
-            .also { debug("Found illegal chars: $it") }
+            .also { debugln("Found illegal chars: $it") }
             .sumOf {
                 when (it) {
                     ')' -> 3L

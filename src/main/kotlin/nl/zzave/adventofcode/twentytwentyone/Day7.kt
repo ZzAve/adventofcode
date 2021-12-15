@@ -15,15 +15,15 @@ object Day7 : TwentyTwentyOneProblem<Long> {
 
         for (position in min..max) {
             val fuel = numbers.fold(0L) { acc, cur -> acc + (cur - position).absoluteValue }
-            debug("Position $position costs $fuel fuel")
+            debugln("Position $position costs $fuel fuel")
             if (fuel < currentMinFuel) {
-                debug("Best so far! (position $position, fuel costs: $fuel")
+                debugln("Best so far! (position $position, fuel costs: $fuel")
                 currentMinFuel = fuel
                 currentMinFuelPosition = position
             }
         }
 
-        log("Found position: $currentMinFuelPosition")
+        logln("Found position: $currentMinFuelPosition")
         return currentMinFuel
 
     }
@@ -37,13 +37,13 @@ object Day7 : TwentyTwentyOneProblem<Long> {
         for (position in numbers.minOf { it }..numbers.maxOf { it }) {
             val fuel = calculateFuelCost(numbers, position, currentMinFuel)
             if (fuel < currentMinFuel) {
-                debug("Best so far! (position $position, fuel costs: $fuel")
+                debugln("Best so far! (position $position, fuel costs: $fuel")
                 currentMinFuel = fuel
                 currentMinFuelPosition = position
             }
         }
 
-        log("Found position: $currentMinFuelPosition")
+        logln("Found position: $currentMinFuelPosition")
         return currentMinFuel
     }
 
@@ -52,7 +52,7 @@ object Day7 : TwentyTwentyOneProblem<Long> {
         for (number in numbers) {
             val distance = (number - position).absoluteValue
             val cost = distance * (distance + 1) / 2
-            debug("From $number to $position costs $cost fuel")
+            debugln("From $number to $position costs $cost fuel")
             runningTotal += cost
 
             if (runningTotal > runningMin) {
