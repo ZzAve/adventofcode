@@ -10,9 +10,11 @@ fun getFile(fileName: String) = File("./src/main/resources/$fileName").readLines
 interface Problem<T> {
     var debugMode: Boolean
 
-    fun logln(message: Any?) = println(message)
+    fun logln(message: Any?) = logln(0, message)
+    fun logln(indent: Int, message: Any?) = println("\t".repeat(indent) + message)
     fun log(message: Any?) = print(message)
-    fun debugln(message: Any?) = if (debugMode) println(message) else Unit
+    fun debugln(message: Any?) = debugln(0, message)
+    fun debugln(indent: Int, message: Any?) = if (debugMode) println("\t".repeat(indent) + message) else Unit
     fun debug(message: Any?) = if (debugMode) print(message) else Unit
 
     fun solvePart1(input: List<String>): T
@@ -21,7 +23,7 @@ interface Problem<T> {
 
     @OptIn(ExperimentalTime::class)
     fun runSolution(filename: String) {
-        this.debugMode=false
+        this.debugMode = false
         val input: List<String> = getFile(filename)
         measureTime {
             val solutionPart1: T = this.solvePart1(input)
@@ -35,10 +37,7 @@ interface Problem<T> {
     }
 
     @OptIn(ExperimentalTime::class)
-    fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
-        this.debugMode = true
-        val input: List<String> = getFile(filename)
-
+    fun testSolution(input: List<String>, expectedResultPart1: T, expectedResultPart2: T) {
         measureTime {
             val solutionPart1: T = this.solvePart1(input)
             println("Result part 1: $solutionPart1, expected $expectedResultPart1")
@@ -50,6 +49,14 @@ interface Problem<T> {
             println("Result part 2: $solutionPart2, expected $expectedResultPart2")
             check(solutionPart2 == expectedResultPart2) { "Part 2 actual result ($solutionPart2) doesn't match expected result ($expectedResultPart2)" }
         }.also { println("Took $it") }
+
+    }
+
+    @OptIn(ExperimentalTime::class)
+    fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
+        this.debugMode = true
+        val input: List<String> = getFile(filename)
+        testSolution(input, expectedResultPart1, expectedResultPart2)
     }
 
 }
