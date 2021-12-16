@@ -14,17 +14,7 @@ object Day16 : TwentyTwentyOneProblem<Long> {
         logln("input: $input")
         logln("Binary string: $binaryString")
 
-        val startId = 0
-        val motherPackage = Packet(
-            version = 0,
-            type = OPERATOR,
-            startIndexSubPackets = startId,
-            startIndex = startId,
-            operatorInfo = OperatorInfo(subPacketSize = 1)
-
-        )
-
-        recurseHierarchy(startId, binaryString, motherPackage)
+        val motherPackage = solve(binaryString)
 
         logln("===")
         logln("input: $input")
@@ -35,13 +25,30 @@ object Day16 : TwentyTwentyOneProblem<Long> {
         return sumOfVersions
     }
 
+    private fun solve(binaryString: String): Packet {
+        val startId = 0
+        val motherPackage = Packet(
+            version = 0,
+            type = OPERATOR,
+            typeId = -1,
+            startIndexSubPackets = startId,
+            startIndex = startId,
+            operatorInfo = OperatorInfo(subPacketSize = 1)
+
+        )
+
+        recurseHierarchy(startId, binaryString, motherPackage)
+        return motherPackage
+    }
+
     private fun recurseHierarchy(startId: Int, binaryString: String, motherPacket: Packet, depth: Int = 0) {
         debugln(depth, "Processing from $startId, ${binaryString.substring(startId)} (Inside: $motherPacket)")
         // Start
         var runningIndex = startId
 
         val version = binaryString.substring(runningIndex, runningIndex + 3).toInt(2)
-        val type = binaryString.substring(runningIndex + 3, runningIndex + 6).toInt(2).type()
+        val typeId = binaryString.substring(runningIndex + 3, runningIndex + 6).toInt(2)
+        val type = typeId.type()
         runningIndex += 6
 
         when (type) {
@@ -65,6 +72,7 @@ object Day16 : TwentyTwentyOneProblem<Long> {
                 val packet = Packet(
                     version = version,
                     type = type,
+                    typeId = typeId,
                     value = literalValue.toLong(2),
                     startIndexSubPackets = runningIndex,
                     startIndex = startId
@@ -84,6 +92,7 @@ object Day16 : TwentyTwentyOneProblem<Long> {
                         val packet = Packet(
                             version = version,
                             type = type,
+                            typeId = typeId,
                             operatorInfo = OperatorInfo(subPacketBitLength = totalLengthOfSubPackets),
                             startIndexSubPackets = runningIndex,
                             startIndex = startId
@@ -101,6 +110,7 @@ object Day16 : TwentyTwentyOneProblem<Long> {
                         val packet = Packet(
                             version,
                             type,
+                            typeId = typeId,
                             operatorInfo = OperatorInfo(subPacketSize = numberOfSubPacketsContained),
                             startIndexSubPackets = runningIndex,
                             startIndex = startId
@@ -116,7 +126,7 @@ object Day16 : TwentyTwentyOneProblem<Long> {
         debugln(depth, "Found $type packet starting at $startId to: ${motherPacket.subPackets.last()}")
         debugln(depth, "Updated ${motherPacket.type} packet starting at ${motherPacket.startIndex} to: $motherPacket")
         logln(
-            "Progress: $runningIndex / ${binaryString.length}\t" + "=".repeat(((runningIndex * 1.0 / binaryString.length) * 20).toInt())
+            "Progress: $runningIndex / ${binaryString.length}\t" + "=".repeat(((runningIndex * 1.0 / binaryString.length) * 50).toInt())
         )
 
 
@@ -166,32 +176,52 @@ object Day16 : TwentyTwentyOneProblem<Long> {
     }
 
     override fun solvePart2(input: List<String>): Long {
-        return -1L;
+        val binaryString = input.toBinaryString()
+
+        logln("input: $input")
+        logln("Binary string: $binaryString")
+
+        val motherPackage = solve(binaryString)
+
+        return motherPackage.expression()
     }
 
     data class Packet(
         val version: Int,
         val type: Type,
+        val typeId: Int,
         val value: Long? = null,
         val subPackets: MutableList<Packet> = mutableListOf(),
         val startIndex: Int,
         var startIndexSubPackets: Int,
-//        var subPacketsLength: Int,
         val operatorInfo: OperatorInfo? = null,
     ) {
-
-
         fun sumOfVersions(): Long {
             return version + subPackets.sumOf { it.sumOfVersions() }
         }
 
-        fun prettyPrint(depth: Int = 0): Unit {
-            print("\t".repeat(depth) + "Packet[")
-            println("version=$version, type=$type, value=$value, startIndex:$startIndex, subPackets: [")
-            subPackets.forEach { it.prettyPrint(depth + 1) }
-            println("\t".repeat(depth) + "\t]")
-            println("\t".repeat(depth) + "]")
+        fun expression(): Long = when (typeId) {
+            4 -> value ?: error("TypeId 4 should be a LITERAL 😱")
+            0 -> subPackets.sumOf { it.expression() }
+            1 -> subPackets.fold(1L) { acc, cur -> acc * cur.expression() }
+            2 -> subPackets.minOf { it.expression() }
+            3 -> subPackets.maxOf { it.expression() }
+            5 -> if (subPackets[0].expression() > subPackets[1].expression()) 1 else 0
+            6 -> if (subPackets[0].expression() < subPackets[1].expression()) 1 else 0
+            7 -> if (subPackets[0].expression() == subPackets[1].expression()) 1 else 0
+            else -> subPackets.also { check(it.size == 1) }[0].expression()
+        }
 
+        fun prettyPrint(depth: Int = 0) {
+            print("\t".repeat(depth) + "Packet[")
+            print("version=$version, type=$type, value=$value, startIndex:$startIndex)")
+            if (subPackets.size > 0) {
+                println(", subPackets: [")
+                subPackets.forEach { it.prettyPrint(depth + 1) }
+                println("\t".repeat(depth) + "]")
+            } else {
+                println(", subPackets: [] ]")
+            }
         }
 
         fun packetBitLength(): Int {
@@ -225,11 +255,19 @@ private fun List<String>.toBinaryString(): String {
 }
 
 fun main() {
-//    Day16.testSolution(listOf("38006F45291200"), 9, -1)
-//    Day16.testSolution(listOf("EE00D40C823060"), 14, -1)
-//    Day16.testSolution(listOf("8A004A801A8002F478"), 16, -1)
-    Day16.testSolution(listOf("620080001611562C8802118E34"), 12, -1)
-    Day16.testSolution(listOf("A0016C880162017C3686B18A3D4780"), 31, -1)
+    Day16.testSolution(listOf("38006F45291200"), 9)
+    Day16.testSolution(listOf("EE00D40C823060"), 14)
+    Day16.testSolution(listOf("8A004A801A8002F478"), 16)
+    Day16.testSolution(listOf("620080001611562C8802118E34"), 12)
+    Day16.testSolution(listOf("A0016C880162017C3686B18A3D4780"), 31)
+
+
+    Day16.testSolution(listOf("C200B40A82"), expectedResultPart2 = 3)
+    Day16.testSolution(listOf("04005AC33890"), expectedResultPart2 = 54)
+    Day16.testSolution(listOf("880086C3E88112"), expectedResultPart2 = 7)
+    Day16.testSolution(listOf("9C0141080250320F1802104A08"), expectedResultPart2 = 1)
+
+
     println("--------- NOW FOR REALS --------")
     Day16.runSolution("day16.data")
 }

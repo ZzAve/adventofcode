@@ -2,6 +2,7 @@ package nl.zzave.adventofcode
 
 import nl.zzave.adventofcode.twentytwentyone.Coord
 import java.io.File
+import kotlin.math.exp
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
@@ -37,14 +38,14 @@ interface Problem<T> {
     }
 
     @OptIn(ExperimentalTime::class)
-    fun testSolution(input: List<String>, expectedResultPart1: T, expectedResultPart2: T) {
-        measureTime {
+    fun testSolution(input: List<String>, expectedResultPart1: T? = null, expectedResultPart2: T? = null) {
+        if (expectedResultPart1 != null) measureTime {
             val solutionPart1: T = this.solvePart1(input)
             println("Result part 1: $solutionPart1, expected $expectedResultPart1")
             check(solutionPart1 == expectedResultPart1) { "Part 1 actual result ($solutionPart1) doesn't match expected result ($expectedResultPart1)" }
         }.also { println("Took $it") }
 
-        measureTime {
+        if (expectedResultPart2 != null) measureTime {
             val solutionPart2 = this.solvePart2(input)
             println("Result part 2: $solutionPart2, expected $expectedResultPart2")
             check(solutionPart2 == expectedResultPart2) { "Part 2 actual result ($solutionPart2) doesn't match expected result ($expectedResultPart2)" }
@@ -53,7 +54,7 @@ interface Problem<T> {
     }
 
     @OptIn(ExperimentalTime::class)
-    fun testSolution(filename: String, expectedResultPart1: T, expectedResultPart2: T) {
+    fun testSolution(filename: String, expectedResultPart1: T? = null, expectedResultPart2: T? = null) {
         this.debugMode = true
         val input: List<String> = getFile(filename)
         testSolution(input, expectedResultPart1, expectedResultPart2)
