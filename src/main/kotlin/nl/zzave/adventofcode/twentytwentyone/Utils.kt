@@ -24,6 +24,9 @@ data class Coord(
 
 
     private operator fun minus(that: Coord): Coord = Coord(this.x - that.x, this.y - that.y)
+    operator fun plus(other: Coord): Coord {
+        return Coord(this.x + other.x, this.y + other.y)
+    }
 }
 
 
