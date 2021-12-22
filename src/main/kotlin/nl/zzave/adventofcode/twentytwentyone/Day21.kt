@@ -39,6 +39,8 @@ object Day21 : TwentyTwentyOneProblem<Long> {
     }
 
     override fun solvePart2(input: List<String>): Long {
+        quantumCache.clear()
+        logln("Resetting quantumcache")
         val startPositions = parseInput(input)
 
 
